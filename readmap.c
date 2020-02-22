@@ -46,7 +46,7 @@ int	*reallocints(int *ptr, int msize, int *arr)
 	newarr = (int*)malloc(sizeof(*newarr) * msize);
 	while (arr != ptr)
 		*newarr++ = *arr++;
-	free(arr);
+	free(rem);
 	return (newarr);
 }
 
