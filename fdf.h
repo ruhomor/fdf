@@ -4,6 +4,8 @@
 
 # include "lib/libft.h"
 
+#define BUFF_MSIZE 4
+
 typedef	struct	s_map
 {
 	int	**cell;
