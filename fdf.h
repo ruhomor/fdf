@@ -10,6 +10,12 @@
 
 # define BUFF_MSIZE 4
 
+typedef struct  s_point
+{
+	int	x;
+	int	y;
+}		t_point;
+
 typedef	struct	s_map
 {
 	int	**cell;
@@ -22,5 +28,8 @@ int	**addline(t_map *map, int *arr);
 int	*reallocints(int **ptr, int msize, int *arr);
 int		ft_ints(char *mapline, t_map *map);
 void	readmap(t_map *map, char *file);
+int	bitabs(int n);
+void	initvals(t_point *d, t_point *s, t_point *start, t_point *end);
+void drawLine(t_point start, t_point end);
 
 #endif
