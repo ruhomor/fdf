@@ -12,7 +12,7 @@
 
 #include "fdf.h"
 
-int	bitabs(int n)
+int		bitabs(int n)
 {
 	int	m;
 
@@ -20,7 +20,7 @@ int	bitabs(int n)
 	return ((m & -n) | (~m & n));
 }
 
-void	initvals(t_point *d, t_point *s, t_point *start, t_point *end)
+void		initvals(t_point *d, t_point *s, t_point *start, t_point *end)
 {
 	d->x = bitabs(end->x - start->x);
 	d->y = bitabs(end->y - start->y);
@@ -32,7 +32,7 @@ void	initvals(t_point *d, t_point *s, t_point *start, t_point *end)
 		s->y = 1;
 }
 
-void	initerr(t_point d, int *e, int *e2)
+void		initerr(t_point d, int *e, int *e2)
 {
 	*e = -d.y;
 	if (d.x > d.y)
@@ -41,23 +41,21 @@ void	initerr(t_point d, int *e, int *e2)
 	*e2 = 0;
 }
 
-void drawline(t_point start, t_point end, t_window *meme)
+void		drawline(t_point start, t_point end, t_window *meme, t_map *map)
 {
-	t_point d;
-	t_point s;
-	int	e;
-	int	e2;
-	int	color;
+	t_point	d;
+	t_point	s;
+	int		e;
+	int		e2;
+	int		color;
 
 	color = 0xffffff;
 	initvals(&d, &s, &start, &end);
-	//setPixel(end); //x2y2
 	initerr(d, &e, &e2);
 	mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, end.x, end.y, color);
 	while (start.x != end.x || start.y != end.y)
 	{
 		e2 = e * 2;
-		//setPixel(start);
 		mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, start.x, start.y, color);
 		if (e2 > -d.y)
 		{

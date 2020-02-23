@@ -49,7 +49,7 @@ int				ft_ints(char *mapline, t_map *map);
 void			readmap(t_map *map, char *file);
 int				bitabs(int n);
 void			initvals(t_point *d, t_point *s, t_point *start, t_point *end);
-void			drawline(t_point start, t_point end, t_window *name);
+void			drawline(t_point start, t_point end, t_window *meme, t_map *map);
 void			drawmap(t_window *meme, t_map *map);
 
 #endif

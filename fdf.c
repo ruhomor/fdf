@@ -48,7 +48,6 @@ int	main(int argc, char **argv)
 	meme->mlx_ptr = mlx_init();
 	meme->win_ptr = mlx_new_window(meme->mlx_ptr, 1000, 1000, "MEME");
 	meme->zoom = 20;
-
 	drawmap(meme, map);
 	mlx_key_hook(meme->win_ptr, deal_key, NULL);
 	mlx_loop(meme->mlx_ptr);
@@ -69,9 +68,9 @@ void	drawmap(t_window *meme, t_map *map)
 		while (i < map->width)
 		{
 			drawline((t_point){.x = i * z, .y = j * z},
-					(t_point){.x = (i + 1) * z, .y = j * z}, meme);
+					(t_point){.x = (i + 1) * z, .y = j * z}, meme, map);
 			drawline((t_point){.x = i * z, .y = j * z},
-					(t_point){.x = i * z, .y = (j + 1) * z}, meme);
+					(t_point){.x = i * z, .y = (j + 1) * z}, meme, map);
 			i++;
 		}
 		j++;
