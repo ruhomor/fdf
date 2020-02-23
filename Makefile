@@ -15,33 +15,41 @@ CC = gcc
 NAME = fdf
 
 CFILES = fdf \
-		readmap
+		readmap \
+		line
+
+FW = -framework OpenGL -framework AppKit
 
 SRCS = $(patsubst %, %.c, $(CFILES))
 
 OUT = $(patsubst %, %.o, $(CFILES))
 
-INCL = ./
+INCL = lib/libft.a minilibx_macos/libmlx.a
 
-FLAGS = -Werror -Wall -Wextra
+FLAGS = -Werror -Wall -Wextra -g
 
 LIB = ./lib
 
+GLIB = ./minilibx_macos
+
 all: $(NAME)
 
-%.o:%.c -I$(INCL)
+%.o:%.c -I./
 	@$(CC) $(FLAGS) $(INCL) $< -o $@
 
 $(NAME):
 	@make -C $(LIB)
-	@$(CC) $(FLAGS) -o $(NAME) $(SRCS) -I $(INCL) -L. lib/libft.a
+	@make -C $(GLIB)
+	@$(CC) $(FLAGS) -o $(NAME) $(SRCS) $(INCL) $(FW)
 
 clean:
 	@rm -f $(OUT)
+	@make -C $(GLIB) clean
 	@make -C $(LIB) clean
 
 fclean: clean
 	@rm -f $(NAME)
+	@make -C $(GLIB) fclean
 	@make -C $(LIB) fclean
 
 re: fclean all

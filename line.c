@@ -12,22 +12,16 @@
 
 #include "fdf.h"
 
-//TODO figure out setpixel???
-
 int	bitabs(int n)
 {
-    int	m;
+	int	m;
 
-    m = n >> 31;
-    return ((m & -n) | (~m & n));
+	m = n >> 31;
+	return ((m & -n) | (~m & n));
 }
 
-void	initvals(t_point *d, t_point *s, t_point *start, t_point *end, int z)
+void	initvals(t_point *d, t_point *s, t_point *start, t_point *end)
 {
-	start->x *= z;
-	start->y *= z;
-	end->x *= z;
-	end->y *= z;
 	d->x = bitabs(end->x - start->x);
 	d->y = bitabs(end->y - start->y);
 	s->x = -1;
@@ -38,27 +32,39 @@ void	initvals(t_point *d, t_point *s, t_point *start, t_point *end, int z)
 		s->y = 1;
 }
 
-void drawline(t_point start, t_point end, t_window meme) 
+void	initerr(t_point d, int *e, int *e2)
+{
+	*e = -d.y;
+	if (d.x > d.y)
+		*e = d.x;
+	*e /= 2;
+	*e2 = 0;
+}
+
+void drawline(t_point start, t_point end, t_window *meme)
 {
 	t_point d;
 	t_point s;
 	int	e;
 	int	e2;
+	int	color;
 
-	initvals(&d, &s, &start, &end, meme->zoom);
+	color = 0xffffff;
+	initvals(&d, &s, &start, &end);
 	//setPixel(end); //x2y2
+	initerr(d, &e, &e2);
 	mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, end.x, end.y, color);
-	while(start.x != end.x || start.y != end.y)
+	while (start.x != end.x || start.y != end.y)
 	{
 		e2 = e * 2;
 		//setPixel(start);
 		mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, start.x, start.y, color);
-		if(e2 > -d.y) 
+		if (e2 > -d.y)
 		{
 			e -= d.y;
 			start.x += s.x;
 		}
-		if(e2 < d.x) 
+		if (e2 < d.x)
 		{
 			e += d.x;
 			start.y += s.y;

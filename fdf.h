@@ -18,7 +18,7 @@
 # include <stdlib.h>
 # include <fcntl.h>
 # include <unistd.h>
-//# include <mlx.h>
+# include "minilibx_macos/mlx.h"
 
 # define BUFF_MSIZE 4
 
@@ -49,7 +49,7 @@ int				ft_ints(char *mapline, t_map *map);
 void			readmap(t_map *map, char *file);
 int				bitabs(int n);
 void			initvals(t_point *d, t_point *s, t_point *start, t_point *end);
-void			drawline(t_point start, t_point end);
-void			drawmap(t_window meme, t_map map)
+void			drawline(t_point start, t_point end, t_window *name);
+void			drawmap(t_window *meme, t_map *map);
 
 #endif

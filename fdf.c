@@ -12,7 +12,12 @@
 
 #include <stdio.h>
 #include "fdf.h"
-#include  
+
+int	deal_key(int key)
+{
+	printf("%d", key);
+	return (0);
+}
 
 int	main(int argc, char **argv)
 {
@@ -21,6 +26,7 @@ int	main(int argc, char **argv)
 	int	i;
 	int	j;
 
+	meme = (t_window*)malloc(sizeof(*meme));
 	i = 0;
 	j = 0;
 	argc--;
@@ -49,21 +55,24 @@ int	main(int argc, char **argv)
 	return (0);
 }
 
-void	drawmap(t_window meme, t_map map)
+void	drawmap(t_window *meme, t_map *map)
 {
 	int	i;
 	int	j;
+	int	z;
 
+	z = meme->zoom;
 	j = 0;
 	while (j < map->height)
 	{
 		i = 0;
 		while (i < map->width)
 		{
-			drawline((t_point){.x = i, .y = j},
-					(t_point){.x = i + 1, .y = j}, meme);
-			drawline((t_point){.x = i, .y = j},
-					(t_point){.x = i++, .y = j + 1}, meme);
+			drawline((t_point){.x = i * z, .y = j * z},
+					(t_point){.x = (i + 1) * z, .y = j * z}, meme);
+			drawline((t_point){.x = i * z, .y = j * z},
+					(t_point){.x = i * z, .y = (j + 1) * z}, meme);
+			i++;
 		}
 		j++;
 	}
