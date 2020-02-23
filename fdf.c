@@ -1,5 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   fdf.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kachiote <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/02/23 22:56:25 by kachiote          #+#    #+#             */
+/*   Updated: 2020/02/23 22:56:27 by kachiote         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdio.h>
 #include "fdf.h"
+#include  
 
 int	main(int argc, char **argv)
 {
@@ -38,18 +51,20 @@ int	main(int argc, char **argv)
 
 void	drawmap(t_window meme, t_map map)
 {
-		int	i;
-		int	j;
+	int	i;
+	int	j;
 
-		j = 0;
-		while (j < map->height)
+	j = 0;
+	while (j < map->height)
+	{
+		i = 0;
+		while (i < map->width)
 		{
-			i = 0;
-			while (i < map->width)
-			{
-				drawline((t_point){.x = i, .y = j}, (t_point){.x = i + 1, .y = j}, meme);
-				drawline((t_point){.x = i, .y = j}, (t_point){.x = i++, .y = j + 1}, meme);
-			}
-			j++;
+			drawline((t_point){.x = i, .y = j},
+					(t_point){.x = i + 1, .y = j}, meme);
+			drawline((t_point){.x = i, .y = j},
+					(t_point){.x = i++, .y = j + 1}, meme);
 		}
+		j++;
+	}
 }
