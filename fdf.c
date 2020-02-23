@@ -15,9 +15,11 @@ int	main(int argc, char **argv)
 	while (i < map->height)
 	{
 		j = 0;
-		while (j++ < map->width)
-			printf("%d ", map->cell[i][j]);
+		while (j < map->width)
+			printf("%d ", map->cell[i][j++]);
 		printf("\n");
+		i++;
 	}
+	maperror(map);
 	return (0);
 }

@@ -6,7 +6,7 @@ void	maperror(t_map *map)
 
 	cell = map->cell;
 	ft_putstr_fd("invalid map?", 2);
-	while (cell)
+	while (*cell)
 	{
 		free(*cell);
 		cell++;
@@ -23,7 +23,7 @@ int	**addline(t_map *map, int *arr)
 	int	lines;
 
 	lines = map->height;
-	new = (int**)malloc(sizeof(*new) * (map->height + 1));
+	new = (int**)malloc(sizeof(*new) * (map->height + 1)); //alloc c1
 	buf = new;
 	cell = map->cell;
 	while (lines)
@@ -32,21 +32,24 @@ int	**addline(t_map *map, int *arr)
 		lines--;
 	}
 	*buf = arr;
-	free(map->cell);
+	free(map->cell); //free old c1
 	map->cell = new;
 	return (new);
 }
 
-int	*reallocints(int *ptr, int msize, int *arr)
+int	*reallocints(int **ptr, int msize, int *arr)
 {
 	int	*newarr;
 	int	*rem;
+	int	*newptr;
 
 	rem = arr;
-	newarr = (int*)malloc(sizeof(*newarr) * msize);
-	while (arr != ptr)
-		*newarr++ = *arr++;
-	free(rem);
+	newarr = (int*)malloc(sizeof(*newarr) * msize); //realloc a1
+	newptr = newarr;
+	while (rem != *ptr)
+		*newptr++ = *rem++;
+	free(arr); //free old a1
+	*ptr = newptr;
 	return (newarr);
 }
 
@@ -57,11 +60,13 @@ int		ft_ints(char *mapline, t_map *map)
 	char	**buf;
 	int		*ptr;
 	int		*arr;
+	char		**tof;
 
 	//map->cells = addline(map);
 	msize = BUFF_MSIZE;
-	buf = ft_strsplit(mapline, ' '); //TODO width?? write //-no matter
-	arr = (int*)malloc(sizeof(*arr) * msize);
+	buf = ft_strsplit(mapline, ' '); //alloc b1
+	tof = buf;
+	arr = (int*)malloc(sizeof(*arr) * msize); //alloc a1
 	ptr = arr;
 	mleft = msize;
 	while (*buf)
@@ -69,12 +74,13 @@ int		ft_ints(char *mapline, t_map *map)
 		*ptr++ = ft_atoi(*buf++);
 		if (!(--mleft))
 		{
-			arr = reallocints(ptr, msize + BUFF_MSIZE, arr);
+			arr = reallocints(&ptr, msize + BUFF_MSIZE, arr); //realloc a1
 			mleft += BUFF_MSIZE;
 			msize += BUFF_MSIZE;
 		}
 	}
-	map->cell = addline(map, reallocints(ptr, msize - mleft, arr));
+	free(tof); //free b1
+	map->cell = addline(map, reallocints(&ptr, msize - mleft, arr)); //realloc a1
 	return (msize - mleft);
 }
 
@@ -94,4 +100,6 @@ void	readmap(t_map *map, char *file)
 		else
 			maperror(map);
 	}
+	free(mapline);
+	close(fd);
 }
