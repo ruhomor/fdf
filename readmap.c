@@ -13,12 +13,14 @@ void	maperror(t_map *map)
 			ft_putstr_fd("invalid map?", 2);
 			while (*cell)
 			{
+				printf("beepbeep\n");
 				free(*cell);
 				cell++;
 			}
 			free(map->cell);
 		}
 		free(map);
+		map = NULL;
 	}
 }
 
@@ -76,14 +78,15 @@ int		ft_ints(char *mapline, t_map *map)
 
 	//map->cells = addline(map);
 	msize = BUFF_MSIZE;
-	buf = ft_strsplit(mapline, ' '); //alloc b1
+	buf = ft_strsplit(mapline, ' '); //alloc b[1][1]
 	tof = buf;
 	arr = (int*)malloc(sizeof(*arr) * msize); //alloc a1
 	ptr = arr;
 	mleft = msize;
 	while (*buf)
 	{
-		*ptr++ = ft_atoi(*buf++);
+		*ptr++ = ft_atoi(*buf);
+		free(*buf++); //free b[1]
 		if (!(--mleft))
 		{
 			arr = reallocints(&ptr, msize + BUFF_MSIZE, arr); //realloc a1
@@ -91,8 +94,9 @@ int		ft_ints(char *mapline, t_map *map)
 			msize += BUFF_MSIZE;
 		}
 	}
-	free(tof); //free b1??? TODO
+	free(tof); //free b[1][1] TODO
 	map->cell = addline(map, reallocints(&ptr, msize - mleft, arr)); //realloc a1
+	printf("?%d = %d?\n", msize - mleft, map->width);
 	return (msize - mleft);
 }
 
@@ -106,10 +110,13 @@ void	readmap(t_map *map, char *file)
     map->height = 0;
 	map->width = ft_ints(mapline, map);
 	map->height++;
-	while (get_next_line(fd, &mapline))
+	while (get_next_line(fd, &mapline)) //mapline free???
 	{
 		if (ft_ints(mapline, map) == map->width)
+		{
 			map->height++;
+			free(mapline);
+		}
 		else
 		{
 			maperror(map);

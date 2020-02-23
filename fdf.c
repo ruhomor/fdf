@@ -22,5 +22,6 @@ int	main(int argc, char **argv)
 		printf("\n");
 		i++;
 	}
+	maperror(map); //mem debug
 	return (0);
 }
