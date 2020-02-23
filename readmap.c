@@ -110,6 +110,7 @@ void	readmap(t_map *map, char *file)
     map->height = 0;
 	map->width = ft_ints(mapline, map);
 	map->height++;
+	free(mapline);
 	while (get_next_line(fd, &mapline)) //mapline free???
 	{
 		if (ft_ints(mapline, map) == map->width)
