@@ -11,6 +11,8 @@ int	main(int argc, char **argv)
 	j = 0;
 	argc--;
 	map = (t_map*)malloc(sizeof(*map));
+	map->cell = NULL;
+	//readmap(map, "test1");
 	readmap(map, argv[1]);
 	while (i < map->height)
 	{
@@ -20,6 +22,5 @@ int	main(int argc, char **argv)
 		printf("\n");
 		i++;
 	}
-	maperror(map);
 	return (0);
 }

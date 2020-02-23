@@ -30,11 +30,11 @@ void drawLine(t_point start, t_point end)
 	int	e2;
 
 	initvals(&d, &s, &start, &end);
-	setPixel(end); //x2y2
+	//setPixel(end); //x2y2
 	while(start.x != end.x || start.y != end.y)
 	{
 		e2 = e * 2;
-		setPixel(start);
+		//setPixel(start);
 		if(e2 > -d.y) 
 		{
 			e -= d.y;
