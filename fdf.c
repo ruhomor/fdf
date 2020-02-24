@@ -34,7 +34,7 @@ int	main(int argc, char **argv)
 	map->cell = NULL;
 	//readmap(map, "test1");
 	readmap(map, argv[1]);
-	/*
+	
 	while (i < map->height)
 	{
 		j = 0;
@@ -43,7 +43,7 @@ int	main(int argc, char **argv)
 		printf("\n");
 		i++;
 	}
-	*/
+	
 	//maperror(map); //mem debug
 	meme->mlx_ptr = mlx_init();
 	meme->win_ptr = mlx_new_window(meme->mlx_ptr, 1000, 1000, "MEME");
@@ -58,21 +58,29 @@ void	drawmap(t_window *meme, t_map *map)
 {
 	int	i;
 	int	j;
-	int	z;
 
-	z = meme->zoom;
 	j = 0;
-	while (j < map->height)
+	while (j < map->height - 1)
 	{
 		i = 0;
-		while (i < map->width)
+		while (i < map->width - 1)
 		{
-			drawline((t_point){.x = i * z, .y = j * z},
-					(t_point){.x = (i + 1) * z, .y = j * z}, meme, map);
-			drawline((t_point){.x = i * z, .y = j * z},
-					(t_point){.x = i * z, .y = (j + 1) * z}, meme, map);
+			drawline((t_point){.x = i, .y = j},
+					(t_point){.x = i + 1, .y = j}, meme, map);
+			drawline((t_point){.x = i, .y = j},
+					(t_point){.x = i, .y = j + 1}, meme, map);
 			i++;
 		}
 		j++;
 	}
+	j = map->height - 1; // 1 1 1
+	i = -1;		     // 1 1 1 //
+	while (++i < map->width - 1)
+		drawline((t_point){.x = i, .y = j},
+				(t_point){.x = i + 1, .y = j}, meme, map);
+	i = map->width - 1;
+	j = -1;
+	while (++j < map->height - 1)
+		drawline((t_point){.x = i, .y = j},
+				(t_point){.x = i, .y = j + 1}, meme, map);
 }

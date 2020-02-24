@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "fdf.h"
+#include <stdio.h> //useless
 
 int		bitabs(int n)
 {
@@ -53,9 +54,26 @@ void		initerr(t_point d, int *e, int *e2)
 	*e2 = 0;
 }
 
-int		color(t_point meme)
+int		rgbtohex(t_point meme)
 {
-	return (meme.r * 16 * 16 + meme.g * 16 + meme.b);
+	int	hex;
+
+	meme.r = 255; //useless
+	meme.g = 0; //useless
+	meme.b = 0; //useless
+	hex = ((meme.r & 0xff) << 16) | ((meme.g & 0xff) << 8) | (meme.b & 0xff);
+	return (hex);
+}
+
+void		zoomin(t_point *start, t_point *end, t_window *meme)
+{
+	int	zoom;
+
+	zoom = meme->zoom;
+	start->x *= zoom;
+	start->y *= zoom;
+	end->x *= zoom;
+	end->y *= zoom; //z -?
 }
 
 void		drawline(t_point start, t_point end, t_window *meme, t_map *map)
@@ -65,14 +83,19 @@ void		drawline(t_point start, t_point end, t_window *meme, t_map *map)
 	int		e;
 	int		e2;
 
+	printf("suka %d\n", map->cell[start.y][start.x]);
+	printf("blyat %d\n", map->cell[end.y][end.x]);
+	start.z = map->cell[start.y][start.x]; //zoom?
+	end.z = map->cell[end.y][end.x]; //zoom?
+	zoomin(&start, &end, meme);
 	initvals(&d, &s, &start, &end);
 	initerr(d, &e, &e2);
-	mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, end.x, end.y, color(end));
+	mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, end.x, end.y, rgbtohex(end));
 	while (start.x != end.x || start.y != end.y)
 	{
 		e2 = e * 2;
 		mlx_pixel_put(meme->mlx_ptr, meme->win_ptr,
-				start.x, start.y, color(start));
+				start.x, start.y, rgbtohex(start));
 		if (e2 > -d.y)
 		{
 			e -= d.y;

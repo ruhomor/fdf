@@ -49,6 +49,7 @@ void		drawline(t_point start, t_point end, t_window *meme, t_map *map)
 	int		e2;
 	int		color;
 
+	map++; //useless
 	color = 0xffffff;
 	initvals(&d, &s, &start, &end);
 	initerr(d, &e, &e2);
