@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   line.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: kachiote <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/02/23 22:56:48 by kachiote          #+#    #+#             */
-/*   Updated: 2020/02/23 22:56:50 by kachiote         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "fdf.h"
 #include <stdio.h> //useless
 #include <math.h>
@@ -26,24 +14,25 @@ void		initvals(t_point *d, t_point *s, t_point *start, t_point *end)
 {
 	d->x = bitabs(end->x - start->x);
 	d->y = bitabs(end->y - start->y);
-	//d->color.r = bitabs(end->color.r - start->color.r);
-	//d->color.g = bitabs(end->color.g - start->color.g);
-	//d->color.b = bitabs(end->color.b - start->color.b);
+	d->color.r = end->color.r - start->color.r;
+	d->color.g = end->color.g - start->color.g;
+	d->color.b = end->color.b - start->color.b;
 	s->x = -1;
 	s->y = -1;
-	//s->color.r = -1;
-	//s->color.g = -1;
-	//s->color.b = -1;
+	s->color.r = -1;
+	s->color.g = -1;
+	s->color.b = -1;
 	if (start->x < end->x)
 		s->x = 1;
 	if (start->y < end->y)
 		s->y = 1;
-	//if (start->color.r < end->color.r)
-	//	s->color.r = 1;
-	//if (start->color.g < end->color.g)
-	//	s->color.g = 1;
-	//if (start->color.b < end->color.b)
-	//	s->color.b = 1;
+/*	if (start->color.r < end->color.r)
+		s->color.r = 1;
+	if (start->color.g < end->color.g)
+		s->color.g = 1;
+	if (start->color.b < end->color.b)
+		s->color.b = 1;
+		*/
 }
 
 void		initerr(t_point d, int *e, int *e2)
@@ -69,26 +58,41 @@ int		rgbtohex(t_color color)
 void		zoomaiso(t_point *start, t_point *end, t_window *meme)
 {
 	int	zoom;
+	double ugol;
 
+	ugol = 0.523599;
 	zoom = meme->zoom;
 	start->x *= zoom;
 	start->y *= zoom;
+  //  start->z *= zoom; //z -?
 	end->x *= zoom;
-	end->y *= zoom; //z -?
-	start->x = start->x - start->y * cos(0.8);
-	start->y = start->y + start->x * sin(0.8) - start->z;
-	end->x = end->x - end->y * cos(0.8);
-	end->y = end->y + end->x * sin(0.8) - end->z;
-	start->x += 200;
-	start->y += 200;
-	end->x += 200;
-	end->y += 200;
+	end->y *= zoom;
+  //  end->z *= zoom; //z -?
+	start->x = (start->x - start->y) * cos(ugol);
+	start->y = (start->y + start->x) * sin(ugol) - start->z;
+	end->x = (end->x - end->y) * cos(ugol);
+	end->y = (end->y + end->x) * sin(ugol) - end->z;
+	start->x += 600;
+	start->y += 600;
+	end->x += 600;
+	end->y += 600;
+}
+
+t_color		cp(t_point cur, t_point start, t_point end)
+{
+	t_color	color;
+
+	color.r = start.color.r + (end.color.r - start.color.r) * (cur.x - start.x) / (end.x - start.x);
+	color.g = start.color.g + (end.color.g - start.color.g) * (cur.x - start.x) / (end.x - start.x);
+	color.b = start.color.b + (end.color.b - start.color.b) * (cur.x - start.x) / (end.x - start.x);
+	return (color);
 }
 
 void		drawline(t_point start, t_point end, t_window *meme, t_map *map)
 {
 	t_point	d;
 	t_point	s;
+	t_point	cur;
 	int		e;
 	int		e2;
 
@@ -100,22 +104,25 @@ void		drawline(t_point start, t_point end, t_window *meme, t_map *map)
 	initvals(&d, &s, &start, &end);
 	initerr(d, &e, &e2);
 	mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, end.x, end.y, rgbtohex(end.color));
-/*	while (start.x != end.x || start.y != end.y)
+	cur = start;
+	while (cur.x != end.x || cur.y != end.y)
 	{
+
 		e2 = e * 2;
+		//start.color = pp(map, start.x, start.y, meme->zoom);
 		mlx_pixel_put(meme->mlx_ptr, meme->win_ptr,
-				start.x, start.y, rgbtohex(start.color));
+				cur.x, cur.y, rgbtohex(cur.color));
+		cur.color = cp(cur, start, end);
 		if (e2 > -d.y)
 		{
 			e -= d.y;
-			start.x += s.x;
+			cur.x += s.x;
 		}
 		if (e2 < d.x)
 		{
 			e += d.x;
-			start.y += s.y;
+			cur.y += s.y;
 		}
 	}
-	*/
 	mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, start.x, start.y, rgbtohex(start.color)); //debug
 }

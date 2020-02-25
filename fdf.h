@@ -65,5 +65,6 @@ int				bitabs(int n);
 void			initvals(t_point *d, t_point *s, t_point *start, t_point *end);
 void			drawline(t_point start, t_point end, t_window *meme, t_map *map);
 void			drawmap(t_window *meme, t_map *map);
+t_color			pp(t_map *map, int x, int y, int zoom);
 
 #endif
