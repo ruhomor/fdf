@@ -19,6 +19,8 @@
 # include <fcntl.h>
 # include <unistd.h>
 # include "minilibx_macos/mlx.h"
+# define MIN 2147483647
+# define MAX -2147483648
 
 # define BUFF_MSIZE 4
 
@@ -29,14 +31,19 @@ typedef struct  s_window
 	int			zoom;
 }				t_window;
 
+typedef struct	s_color
+{
+	int			r;
+	int			g;
+	int			b;
+}				t_color;
+
 typedef struct	s_point
 {
 	int			x;
 	int			y;
 	int			z;
-	int			r;
-	int			g;
-	int			b;
+	t_color			color;
 }				t_point;
 
 typedef	struct	s_map
@@ -44,6 +51,9 @@ typedef	struct	s_map
 	int			**cell;
 	int			width;
 	int			height;
+	int			max;
+	int			min;
+	unsigned int		colorrange;
 }				t_map;
 
 void			maperror(t_map *map);

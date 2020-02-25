@@ -85,7 +85,11 @@ int		ft_ints(char *mapline, t_map *map)
 	mleft = msize;
 	while (*buf)
 	{
-		*ptr++ = ft_atoi(*buf);
+		if ((*ptr = ft_atoi(*buf)) > map->max)
+			map->max = *ptr;
+		if (*ptr < map->min)
+			map->min = *ptr;
+		ptr++;
 		free(*buf++); //free b[1]
 		if (!(--mleft))
 		{
@@ -99,7 +103,33 @@ int		ft_ints(char *mapline, t_map *map)
 	printf("?%d = %d?\n", msize - mleft, map->width);
 	return (msize - mleft);
 }
+/*
+int	max(int *arr, int w)
+{
+	int	max;
+	int	i;
 
+	max = *arr;
+	i = -1;
+	while (++i < w)
+		if (max < *arr)
+			max = *(arr - 1);
+	return (max);
+}
+
+int	min(int *arr, int w)
+{
+	int	min;
+	int	i;
+
+	min = *arr;
+	i = -1;
+	while (++i < w)
+		if (min > *arr++)
+			min = *(arr - 1);
+	return (min);
+}
+*/
 void	readmap(t_map *map, char *file)
 {
 	int	fd;
@@ -107,9 +137,13 @@ void	readmap(t_map *map, char *file)
 
 	fd = open(file, O_RDONLY, 0);
 	get_next_line(fd, &mapline);
-    map->height = 0;
+	map->height = 0;
+	map->max = MAX;
+	map->min = MIN;
 	map->width = ft_ints(mapline, map);
 	map->height++;
+	//map->max = max(*(map->cell), map->width);
+	//map->min = min(*(map->cell), map->width);
 	free(mapline);
 	while (get_next_line(fd, &mapline)) //mapline free???
 	{
@@ -121,7 +155,7 @@ void	readmap(t_map *map, char *file)
 		else
 		{
 			maperror(map);
-			break;
+			break ;
 		}
 	}
 	free(mapline);

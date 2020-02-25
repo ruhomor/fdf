@@ -26,43 +26,43 @@ void		initvals(t_point *d, t_point *s, t_point *start, t_point *end)
 {
 	d->x = bitabs(end->x - start->x);
 	d->y = bitabs(end->y - start->y);
-	d->r = bitabs(end->r - start->r);
-	d->g = bitabs(end->g - start->g);
-	d->b = bitabs(end->b - start->b);
+	//d->color.r = bitabs(end->color.r - start->color.r);
+	//d->color.g = bitabs(end->color.g - start->color.g);
+	//d->color.b = bitabs(end->color.b - start->color.b);
 	s->x = -1;
 	s->y = -1;
-	s->r = -1;
-	s->g = -1;
-	s->b = -1;
+	//s->color.r = -1;
+	//s->color.g = -1;
+	//s->color.b = -1;
 	if (start->x < end->x)
 		s->x = 1;
 	if (start->y < end->y)
 		s->y = 1;
-	if (start->r < end->r)
-		s->r = 1;
-	if (start->g < end->g)
-		s->g = 1;
-	if (start->b < end->b)
-		s->b = 1;
+	//if (start->color.r < end->color.r)
+	//	s->color.r = 1;
+	//if (start->color.g < end->color.g)
+	//	s->color.g = 1;
+	//if (start->color.b < end->color.b)
+	//	s->color.b = 1;
 }
 
-void		initerr(t_point d, t_point *e)
+void		initerr(t_point d, int *e, int *e2)
 {
-	e->x = -d.y;
+	*e = -d.y;
 	if (d.x > d.y)
-		e->x = d.x;
-	e->x /= 2;
-	e->y = 0;
+		*e = d.x;
+	*e /= 2;
+	*e2 = 0;
 }
 
-int		rgbtohex(t_point meme)
+int		rgbtohex(t_color color)
 {
 	int	hex;
 
-	meme.r = 255; //useless
-	meme.g = 0; //useless
-	meme.b = 0; //useless
-	hex = ((meme.r & 0xff) << 16) | ((meme.g & 0xff) << 8) | (meme.b & 0xff);
+	//color.r = 255;
+	//color.g = 255;
+	//color.b = 255;
+	hex = ((color.r & 0xff) << 16) | ((color.g & 0xff) << 8) | (color.b & 0xff);
 	return (hex);
 }
 
@@ -89,8 +89,8 @@ void		drawline(t_point start, t_point end, t_window *meme, t_map *map)
 {
 	t_point	d;
 	t_point	s;
-	t_point	e; //e.x
-	//int	e2; e.y
+	int		e;
+	int		e2;
 
 	printf("suka %d\n", map->cell[start.y][start.x]);
 	printf("blyat %d\n", map->cell[end.y][end.x]);
@@ -98,22 +98,24 @@ void		drawline(t_point start, t_point end, t_window *meme, t_map *map)
 	end.z = map->cell[end.y][end.x]; //zoom?
 	zoomaiso(&start, &end, meme);
 	initvals(&d, &s, &start, &end);
-	initerr(d, &e);
-	mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, end.x, end.y, rgbtohex(end));
-	while (start.x != end.x || start.y != end.y)
+	initerr(d, &e, &e2);
+	mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, end.x, end.y, rgbtohex(end.color));
+/*	while (start.x != end.x || start.y != end.y)
 	{
-		e.y = e.x * 2;
+		e2 = e * 2;
 		mlx_pixel_put(meme->mlx_ptr, meme->win_ptr,
-				start.x, start.y, rgbtohex(start));
-		if (e.y > -d.y)
+				start.x, start.y, rgbtohex(start.color));
+		if (e2 > -d.y)
 		{
-			e.x -= d.y;
+			e -= d.y;
 			start.x += s.x;
 		}
-		if (e.y < d.x)
+		if (e2 < d.x)
 		{
-			e.x += d.x;
+			e += d.x;
 			start.y += s.y;
 		}
 	}
+	*/
+	mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, start.x, start.y, rgbtohex(start.color)); //debug
 }
