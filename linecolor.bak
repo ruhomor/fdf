@@ -46,13 +46,13 @@ void		initvals(t_point *d, t_point *s, t_point *start, t_point *end)
 		s->b = 1;
 }
 
-void		initerr(t_point d, t_point *e)
+void		initerr(t_point d, int *e, int *e2)
 {
-	e->x = -d.y;
+	*e = -d.y;
 	if (d.x > d.y)
-		e->x = d.x;
-	e->x /= 2;
-	e->y = 0;
+		*e = d.x;
+	*e /= 2;
+	*e2 = 0;
 }
 
 int		rgbtohex(t_point meme)
@@ -75,22 +75,22 @@ void		zoomaiso(t_point *start, t_point *end, t_window *meme)
 	start->y *= zoom;
 	end->x *= zoom;
 	end->y *= zoom; //z -?
-	start->x = start->x - start->y * cos(0.8);
-	start->y = start->y + start->x * sin(0.8) - start->z;
-	end->x = end->x - end->y * cos(0.8);
-	end->y = end->y + end->x * sin(0.8) - end->z;
-	start->x += 200;
-	start->y += 200;
-	end->x += 200;
-	end->y += 200;
+    start->x = start->x - start->y * cos(0.8);
+    start->y = start->y + start->x * sin(0.8) - start->z;
+    end->x = end->x - end->y * cos(0.8);
+    end->y = end->y + end->x * sin(0.8) - end->z;
+    start->x += 200;
+    start->y += 200;
+    end->x += 200;
+    end->y += 200;
 }
 
 void		drawline(t_point start, t_point end, t_window *meme, t_map *map)
 {
 	t_point	d;
 	t_point	s;
-	t_point	e; //e.x
-	//int	e2; e.y
+	int		e;
+	int		e2;
 
 	printf("suka %d\n", map->cell[start.y][start.x]);
 	printf("blyat %d\n", map->cell[end.y][end.x]);
@@ -98,21 +98,21 @@ void		drawline(t_point start, t_point end, t_window *meme, t_map *map)
 	end.z = map->cell[end.y][end.x]; //zoom?
 	zoomaiso(&start, &end, meme);
 	initvals(&d, &s, &start, &end);
-	initerr(d, &e);
+	initerr(d, &e, &e2);
 	mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, end.x, end.y, rgbtohex(end));
 	while (start.x != end.x || start.y != end.y)
 	{
-		e.y = e.x * 2;
+		e2 = e * 2;
 		mlx_pixel_put(meme->mlx_ptr, meme->win_ptr,
 				start.x, start.y, rgbtohex(start));
-		if (e.y > -d.y)
+		if (e2 > -d.y)
 		{
-			e.x -= d.y;
+			e -= d.y;
 			start.x += s.x;
 		}
-		if (e.y < d.x)
+		if (e2 < d.x)
 		{
-			e.x += d.x;
+			e += d.x;
 			start.y += s.y;
 		}
 	}
