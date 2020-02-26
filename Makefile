@@ -49,7 +49,6 @@ clean:
 
 fclean: clean
 	@rm -f $(NAME)
-	@make -C $(GLIB) fclean
 	@make -C $(LIB) fclean
 
 re: fclean all
