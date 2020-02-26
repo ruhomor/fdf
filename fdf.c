@@ -19,57 +19,64 @@ int	deal_key(int key)
 	return (0);
 }
 
-t_color HsvToRgb(t_color hsv) //returns rgb
+t_color	HsvToRgb(t_color hsv) //returns rgb
 {
-    t_color rgb;
-    unsigned char region, remainder, p, q, t;
+	t_color	rgb;
+	unsigned char	region;
+	unsigned char	remainder;
+	unsigned char	p;
+	unsigned char	q;
+	unsigned char	t;
 
-    if (hsv.g == 0)
-    {
-        rgb.r = hsv.b;
-        rgb.g = hsv.b;
-        rgb.b = hsv.b;
-        return rgb;
-    }
-
-    region = hsv.r / 43;
-    remainder = (hsv.r - (region * 43)) * 6;
-
-    p = (hsv.b * (255 - hsv.g)) >> 8;
-    q = (hsv.b * (255 - ((hsv.g * remainder) >> 8))) >> 8;
-    t = (hsv.b * (255 - ((hsv.g * (255 - remainder)) >> 8))) >> 8;
-
-    if (region == 0) {
-        rgb.r = hsv.b;
-        rgb.g = t;
-        rgb.b = p;
-    }
-    else if (region == 1) {
-        rgb.r = q;
-        rgb.g = hsv.b;
-        rgb.b = p;
-    }
-    else if (region == 2) {
-        rgb.r = p;
-        rgb.g = hsv.b;
-        rgb.b = t;
-    }
-    else if (region == 3) {
-        rgb.r = p;
-        rgb.g = q;
-        rgb.b = hsv.b;
-    }
-    else if (region == 4) {
-        rgb.r = t;
-        rgb.g = p;
-        rgb.b = hsv.b;
-    }
-    else {
-        rgb.r = hsv.b;
-        rgb.g = p;
-        rgb.b = q;
-    }
-    return rgb;
+	if (hsv.g == 0)
+	{
+		rgb.r = hsv.b;
+		rgb.g = hsv.b;
+		rgb.b = hsv.b;
+		return (rgb);
+	}
+	region = hsv.r / 43;
+	remainder = (hsv.r - (region * 43)) * 6;
+	p = (hsv.b * (255 - hsv.g)) >> 8;
+	q = (hsv.b * (255 - ((hsv.g * remainder) >> 8))) >> 8;
+	t = (hsv.b * (255 - ((hsv.g * (255 - remainder)) >> 8))) >> 8;
+	if (region == 0)
+	{
+		rgb.r = hsv.b;
+		rgb.g = t;
+		rgb.b = p;
+	}
+	else if (region == 1)
+	{
+		rgb.r = q;
+		rgb.g = hsv.b;
+		rgb.b = p;
+	}
+	else if (region == 2)
+	{
+		rgb.r = p;
+		rgb.g = hsv.b;
+		rgb.b = t;
+	}
+	else if (region == 3)
+	{
+		rgb.r = p;
+		rgb.g = q;
+		rgb.b = hsv.b;
+	}
+	else if (region == 4)
+	{
+		rgb.r = t;
+		rgb.g = p;
+		rgb.b = hsv.b;
+	}
+	else
+	{
+		rgb.r = hsv.b;
+		rgb.g = p;
+		rgb.b = q;
+	}
+	return (rgb);
 }
 
 t_color RgbToHsv(t_color rgb) //returns hsv
@@ -157,17 +164,17 @@ int	main(int argc, char **argv)
 	{
 		j = 0;
 		while (j < map->width)
-			printf("%d ", map->cell[i][j++]);
+			printf("%ld ", map->cell[i][j++]);
 		printf("\n");
 		i++;
 	}
-	printf("min = %d\n", map->min); //debug
-	printf("max = %d\n", map->max); //debug
+	printf("min = %ld\n", map->min); //debug
+	printf("max = %ld\n", map->max); //debug
 	printf("colorrange = %d\n", colorrange); //debug
 	//maperror(map); //mem debug
 	meme->mlx_ptr = mlx_init();
-	meme->win_ptr = mlx_new_window(meme->mlx_ptr, 2000, 2000, "MEME");
-	meme->zoom = 100;
+	meme->win_ptr = mlx_new_window(meme->mlx_ptr, 2000, 1000, "MEME");
+	meme->zoom = 30;
 	map->colorrange = map->max - map->min;
 	drawmap(meme, map);
 	mlx_expose_hook(meme->win_ptr, deal_key, NULL);

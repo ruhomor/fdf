@@ -33,32 +33,32 @@ typedef struct  s_window
 
 typedef struct	s_color
 {
-	int			r;
-	int			g;
-	int			b;
+	unsigned char		r;
+	unsigned char		g;
+	unsigned char		b;
 }				t_color;
 
 typedef struct	s_point
 {
-	int			x;
-	int			y;
-	int			z;
+	long int		x;
+	long int		y;
+	long int		z;
 	t_color			color;
 }				t_point;
 
 typedef	struct	s_map
 {
-	int			**cell;
+	long int		**cell;
 	int			width;
 	int			height;
-	int			max;
-	int			min;
-	unsigned int		colorrange;
+	long int		max;
+	long int		min;
+	unsigned long int	colorrange;
 }				t_map;
 
 void			maperror(t_map *map);
-int				**addline(t_map *map, int *arr);
-int				*reallocints(int **ptr, int msize, int *arr);
+long int			**addline(t_map *map, long int *arr);
+long int			*reallocints(long int **ptr, int msize, long int *arr);
 int				ft_ints(char *mapline, t_map *map);
 void			readmap(t_map *map, char *file);
 int				bitabs(int n);

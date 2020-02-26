@@ -3,7 +3,7 @@
 
 void	maperror(t_map *map)
 {
-	int		**cell;
+	long int	**cell;
 
 	if (map)
 	{
@@ -24,16 +24,16 @@ void	maperror(t_map *map)
 	}
 }
 
-int	**addline(t_map *map, int *arr)
+long int	**addline(t_map *map, long int *arr)
 {
-	int	**new;
-	int	**buf;
-	int	**cell;
-	int	lines;
+	long int	**new;
+	long int	**buf;
+	long int	**cell;
+	int		lines;
 
 	printf("addline func:\n\n");
 	lines = map->height; //what?
-	new = (int**)malloc(sizeof(*new) * (map->height + 2)); //alloc c1
+	new = (long**)malloc(sizeof(*new) * (map->height + 2)); //alloc c1
 	buf = new;
 	cell = map->cell;
 	while (lines)
@@ -51,14 +51,14 @@ int	**addline(t_map *map, int *arr)
 	return (new);
 }
 
-int	*reallocints(int **ptr, int msize, int *arr)
+long int	*reallocints(long int **ptr, int msize, long int *arr)
 {
-	int	*newarr;
-	int	*rem;
-	int	*newptr;
+	long int	*newarr;
+	long int	*rem;
+	long int	*newptr;
 
 	rem = arr;
-	newarr = (int*)malloc(sizeof(*newarr) * msize); //realloc a1
+	newarr = (long int*)malloc(sizeof(*newarr) * msize); //realloc a1
 	newptr = newarr;
 	while (rem != *ptr)
 		*newptr++ = *rem++;
@@ -72,15 +72,15 @@ int		ft_ints(char *mapline, t_map *map)
 	int		msize; //size_t?
 	int		mleft; //size_t?
 	char	**buf;
-	int		*ptr;
-	int		*arr;
+	long int	*ptr;
+	long int	*arr;
 	char		**tof;
 
 	//map->cells = addline(map);
 	msize = BUFF_MSIZE;
 	buf = ft_strsplit(mapline, ' '); //alloc b[1][1]
 	tof = buf;
-	arr = (int*)malloc(sizeof(*arr) * msize); //alloc a1
+	arr = (long*)malloc(sizeof(*arr) * msize); //alloc a1
 	ptr = arr;
 	mleft = msize;
 	while (*buf)

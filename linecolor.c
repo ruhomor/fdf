@@ -60,22 +60,22 @@ void		zoomaiso(t_point *start, t_point *end, t_window *meme)
 	int	zoom;
 	double ugol;
 
-	ugol = 0.523599;
+	ugol = 0.8;
 	zoom = meme->zoom;
 	start->x *= zoom;
 	start->y *= zoom;
-  //  start->z *= zoom; //z -?
+	start->z *= zoom; //z -?
 	end->x *= zoom;
 	end->y *= zoom;
-  //  end->z *= zoom; //z -?
+	end->z *= zoom; //z -?
 	start->x = (start->x - start->y) * cos(ugol);
 	start->y = (start->y + start->x) * sin(ugol) - start->z;
 	end->x = (end->x - end->y) * cos(ugol);
 	end->y = (end->y + end->x) * sin(ugol) - end->z;
 	start->x += 600;
-	start->y += 600;
+	start->y += 300;
 	end->x += 600;
-	end->y += 600;
+	end->y += 300;
 }
 
 t_color		cp(t_point cur, t_point start, t_point end)
@@ -96,8 +96,8 @@ void		drawline(t_point start, t_point end, t_window *meme, t_map *map)
 	int		e;
 	int		e2;
 
-	printf("suka %d\n", map->cell[start.y][start.x]);
-	printf("blyat %d\n", map->cell[end.y][end.x]);
+	printf("suka %ld\n", map->cell[start.y][start.x]);
+	printf("blyat %ld\n", map->cell[end.y][end.x]);
 	start.z = map->cell[start.y][start.x]; //zoom?
 	end.z = map->cell[end.y][end.x]; //zoom?
 	zoomaiso(&start, &end, meme);
