@@ -13,12 +13,6 @@
 #include <stdio.h>
 #include "fdf.h"
 
-int	deal_key(int key)
-{
-	printf("%d", key);
-	return (0);
-}
-
 t_color	HsvToRgb(t_color hsv) //returns rgb
 {
 	t_color	rgb;
@@ -81,8 +75,9 @@ t_color	HsvToRgb(t_color hsv) //returns rgb
 
 t_color RgbToHsv(t_color rgb) //returns hsv
 {
-    t_color hsv;
-    unsigned char rgbMin, rgbMax;
+	t_color		hsv;
+	unsigned char	rgbMin;	
+	unsigned char	rgbMax;
 
     rgbMin = rgb.r < rgb.g ? (rgb.r < rgb.b ? rgb.r : rgb.b) : (rgb.g < rgb.b ? rgb.g : rgb.b);
     rgbMax = rgb.r > rgb.g ? (rgb.r > rgb.b ? rgb.r : rgb.b) : (rgb.g > rgb.b ? rgb.g : rgb.b);
@@ -131,16 +126,36 @@ t_color	pp(t_map *map, int x, int y, int zoom)
 	return (HsvToRgb(color));
 }
 
-int key_press(int keycode, void *param)
+int	mouse_move(int x, int y, void *p)
 {
-    t_window *meme;
+	t_window	*meme;
 
-    meme = (t_window *)param;
-    if (keycode == 126) {
-        printf("DDDDDDDDDDDDDDD");
-        meme->zoom += 2;
-    }
-    return (0);
+	meme = (t_window*)p;
+	if (meme->drag_flag == 1)
+		printf("Dragging in MEME, at %dx%d.\n", x, y);
+	return (0);
+}
+
+int	mouse_press(int button, int x, int y, void *p)
+{
+	t_window	*meme;
+
+	meme = (t_window*)p;
+	printf("Pressed in MEME, button %d at %dx%d.\n", button, x, y);
+	if (button == 1)
+		meme->drag_flag = 1;
+	return (0);
+}
+
+int	mouse_release(int button, int x, int y, void *p)
+{
+	t_window	*meme;
+
+	meme = (t_window*)p;
+	printf("Released in MEME, button %d at %dx%d.\n", button, x, y);
+	if (button == 1)
+		meme->drag_flag = 0;
+	return (0);
 }
 
 int	main(int argc, char **argv)
@@ -152,6 +167,7 @@ int	main(int argc, char **argv)
 	unsigned int	colorrange; //debug
 
 	meme = (t_window*)malloc(sizeof(*meme));
+	meme->drag_flag = 0;
 	i = 0;
 	j = 0;
 	argc--;
@@ -177,12 +193,20 @@ int	main(int argc, char **argv)
 	meme->zoom = 30;
 	map->colorrange = map->max - map->min;
 	drawmap(meme, map);
-	mlx_expose_hook(meme->win_ptr, deal_key, NULL);
-	//mlx_key_hook(meme->win_ptr, key_press, meme);
-	mlx_hook(meme->win_ptr, 2, 0, key_press, meme);
-	mlx_loop_hook(meme->win_ptr, deal_key, NULL);
+	//mlx_mouse_hook(meme->win_ptr, mouse_click, meme);
+	mlx_hook(meme->win_ptr, 6, 0, mouse_move, meme);
+	mlx_hook(meme->win_ptr, 4, 0, mouse_press, meme);
+	mlx_hook(meme->win_ptr, 5, 0, mouse_release, meme);
+
+	mlx_hook(meme->win_ptr, , 0, x_rot, meme); //debug
+	mlx_hook(meme->win_ptr, , 0, y_rot, meme); //debug
+	mlx_hook(meme->win_ptr, , 0, z_rot, meme); //debug
+
 	mlx_loop(meme->mlx_ptr);
 	return (0);
+	//[mlx_hook 2nd param][6-mousemove][5-buttonrelease][4-buttonpress]
+	//[3-keyrelease][2-keypress][1-undef][0-undef]
+	//mlx_hook 3rd param-??
 }
 
 void	drawmap(t_window *meme, t_map *map)

@@ -29,6 +29,7 @@ typedef struct  s_window
 	void		*mlx_ptr;
 	void		*win_ptr;
 	int			zoom;
+	int			drag_flag;
 }				t_window;
 
 typedef struct	s_color
