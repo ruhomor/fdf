@@ -58,9 +58,11 @@ int		rgbtohex(t_color color)
 void		zoomaiso(t_point *start, t_point *end, t_window *meme)
 {
 	int	zoom;
-	double ugol;
+	double	ugol;
+	double	angle;
 
 	ugol = 0.8;
+	angle = meme->angle;
 	zoom = meme->zoom;
 	start->x *= zoom;
 	start->y *= zoom;

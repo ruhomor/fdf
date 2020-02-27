@@ -158,6 +158,57 @@ int	mouse_release(int button, int x, int y, void *p)
 	return (0);
 }
 
+t_point	transformX(t_point point, double angle)
+{
+	t_point	tmp;
+
+	tmp.x = point.x;
+	tmp.y = point.y * cos(angle) + point.z * sin(angle);
+	tmp.z = -point.y * sin(angle) + point.z * cos(angle);
+	return (tmp);
+}
+
+t_point	transformY(t_point point, double angle)
+{
+	t_point	tmp;
+
+	tmp.x = point.x * cos(angle) + point.z * sin(angle);
+	tmp.y = point.y;
+	tmp.z = -point.x * sin(angle) + point.z * cos(angle);
+	return (tmp);
+}
+
+t_point	transformZ(t_point point, double angle)
+{
+	t_point	tmp;
+
+	tmp.x = point.x * cos(angle) - point.y * sin(angle);
+	tmp.y = point.x * sin(angle) + point.y * cos(angle);
+	tmp.z = point.z;
+	return (tmp);
+}
+
+t_point transformXYZ(t_point point, t_angle angle)
+{
+	return (transformZ(transformY(transformX(point, angle.a), angle.b), angle.g));
+}
+
+int	key_press(int keycode, void *p)
+{
+	t_window	*meme;
+
+	meme = (t_window*)p;
+	if (keycode == 126) //up
+		transformX(meme);
+	if (keycode == 125) //down
+		transformY(meme);
+	if (keycode == 124) //right
+		transformZ(meme);
+	if (keycode == 123) //left
+		transformXYZ(meme);
+	return (0);
+}
+
 int	main(int argc, char **argv)
 {
 	t_map		*map;
@@ -168,6 +219,10 @@ int	main(int argc, char **argv)
 
 	meme = (t_window*)malloc(sizeof(*meme));
 	meme->drag_flag = 0;
+	meme->angle.a = 0;
+	meme->angle.b = 0;
+	meme->angle.g = 0;
+	meme->zoom = 30;
 	i = 0;
 	j = 0;
 	argc--;
@@ -189,24 +244,39 @@ int	main(int argc, char **argv)
 	printf("colorrange = %d\n", colorrange); //debug
 	//maperror(map); //mem debug
 	meme->mlx_ptr = mlx_init();
-	meme->win_ptr = mlx_new_window(meme->mlx_ptr, 2000, 1000, "MEME");
-	meme->zoom = 30;
-	map->colorrange = map->max - map->min;
+	meme->win_ptr = mlx_new_window(meme->mlx_ptr, WINX, WINY, "MEME");
+	map->colorrange = map->max - map->min; //colorrange zero TODO BUG
 	drawmap(meme, map);
+
 	//mlx_mouse_hook(meme->win_ptr, mouse_click, meme);
 	mlx_hook(meme->win_ptr, 6, 0, mouse_move, meme);
 	mlx_hook(meme->win_ptr, 4, 0, mouse_press, meme);
 	mlx_hook(meme->win_ptr, 5, 0, mouse_release, meme);
 
-	mlx_hook(meme->win_ptr, , 0, x_rot, meme); //debug
-	mlx_hook(meme->win_ptr, , 0, y_rot, meme); //debug
-	mlx_hook(meme->win_ptr, , 0, z_rot, meme); //debug
+	mlx_hook(meme->win_ptr, 2, 0, key_press, meme); //debug key_press
 
 	mlx_loop(meme->mlx_ptr);
 	return (0);
 	//[mlx_hook 2nd param][6-mousemove][5-buttonrelease][4-buttonpress]
 	//[3-keyrelease][2-keypress][1-undef][0-undef]
 	//mlx_hook 3rd param-??
+}
+
+void	blackout(t_window *meme)
+{
+	int	i;
+	int	j;
+
+	j = 0;
+	while (j < WINY)
+	{
+		i = -1;
+		while (++i < WINX)
+		{
+			mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, i, j, 0x000000); //black
+		}
+		j++;
+	}
 }
 
 void	drawmap(t_window *meme, t_map *map)

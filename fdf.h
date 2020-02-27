@@ -18,17 +18,28 @@
 # include <stdlib.h>
 # include <fcntl.h>
 # include <unistd.h>
+# include <math.h>
 # include "minilibx_macos/mlx.h"
 # define MIN 2147483647
 # define MAX -2147483648
 
 # define BUFF_MSIZE 4
+# define WINX 2000
+# define WINY 1000
+
+typedef struct	s_angle
+{
+	double			a;
+	double			b;
+	double			g;
+}				t_angle;
 
 typedef struct  s_window
 {
 	void		*mlx_ptr;
 	void		*win_ptr;
 	int			zoom;
+	t_angle			angle;
 	int			drag_flag;
 }				t_window;
 
