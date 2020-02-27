@@ -41,6 +41,7 @@ typedef struct  s_window
 	int			zoom;
 	t_angle			angle;
 	int			drag_flag;
+	int			redraw_flag;
 }				t_window;
 
 typedef struct	s_color
@@ -69,6 +70,7 @@ typedef	struct	s_map
 }				t_map;
 
 void			maperror(t_map *map);
+t_point			transformXYZ(t_point point, t_angle angle);
 long int			**addline(t_map *map, long int *arr);
 long int			*reallocints(long int **ptr, int msize, long int *arr);
 int				ft_ints(char *mapline, t_map *map);
@@ -78,5 +80,6 @@ void			initvals(t_point *d, t_point *s, t_point *start, t_point *end);
 void			drawline(t_point start, t_point end, t_window *meme, t_map *map);
 void			drawmap(t_window *meme, t_map *map);
 t_color			pp(t_map *map, int x, int y, int zoom);
+void			blackout(t_window *meme);
 
 #endif

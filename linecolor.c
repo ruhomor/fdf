@@ -59,22 +59,32 @@ void		zoomaiso(t_point *start, t_point *end, t_window *meme)
 {
 	int	zoom;
 	double	ugol;
-	double	angle;
+	t_color	bcolor;
 
 	ugol = 0.8;
-	angle = meme->angle;
-	zoom = meme->zoom;
+
+	zoom = meme->zoom; //ZOOM Section
 	start->x *= zoom;
 	start->y *= zoom;
 	start->z *= zoom; //z -?
 	end->x *= zoom;
 	end->y *= zoom;
 	end->z *= zoom; //z -?
-	start->x = (start->x - start->y) * cos(ugol);
+
+	start->x = (start->x - start->y) * cos(ugol); //Z-axis section
 	start->y = (start->y + start->x) * sin(ugol) - start->z;
 	end->x = (end->x - end->y) * cos(ugol);
 	end->y = (end->y + end->x) * sin(ugol) - end->z;
-	start->x += 600;
+
+	bcolor = start->color; //starting point rotation
+	*start = transformXYZ(*start, meme->angle);
+	start->color = bcolor;
+
+	bcolor = end->color; //ending point rotation
+	*end = transformXYZ(*end, meme->angle);
+	end->color = bcolor;
+
+	start->x += 600; //xy shift
 	start->y += 300;
 	end->x += 600;
 	end->y += 300;
@@ -105,15 +115,16 @@ void		drawline(t_point start, t_point end, t_window *meme, t_map *map)
 	zoomaiso(&start, &end, meme);
 	initvals(&d, &s, &start, &end);
 	initerr(d, &e, &e2);
-	mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, end.x, end.y, rgbtohex(end.color));
+	mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, end.x,
+			end.y, rgbtohex(end.color));
 	cur = start;
 	while (cur.x != end.x || cur.y != end.y)
 	{
 
 		e2 = e * 2;
 		//start.color = pp(map, start.x, start.y, meme->zoom);
-		mlx_pixel_put(meme->mlx_ptr, meme->win_ptr,
-				cur.x, cur.y, rgbtohex(cur.color));
+		mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x,
+				cur.y, rgbtohex(cur.color));
 		cur.color = cp(cur, start, end);
 		if (e2 > -d.y)
 		{
@@ -126,5 +137,6 @@ void		drawline(t_point start, t_point end, t_window *meme, t_map *map)
 			cur.y += s.y;
 		}
 	}
-	mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, start.x, start.y, rgbtohex(start.color)); //debug
+	mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, start.x,
+			start.y, rgbtohex(start.color)); //debug
 }

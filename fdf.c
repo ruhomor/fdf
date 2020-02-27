@@ -199,13 +199,27 @@ int	key_press(int keycode, void *p)
 
 	meme = (t_window*)p;
 	if (keycode == 126) //up
-		transformX(meme);
+	{
+		meme->angle.a += 0.5;
+		meme->redraw_flag = 1;
+		printf("angle a change = %lf\n", meme->angle.a);
+	}
 	if (keycode == 125) //down
-		transformY(meme);
+		meme->angle.b += 0.5;
+		meme->redraw_flag = 1;
+		printf("angle b change = %lf\n", meme->angle.b);
 	if (keycode == 124) //right
-		transformZ(meme);
+		meme->angle.g += 0.5;
+		meme->redraw_flag = 1;
+		printf("angle g change = %lf\n", meme->angle.g);
 	if (keycode == 123) //left
-		transformXYZ(meme);
+	{
+		meme->angle.a += 0.3;
+		meme->angle.b += 0.3;
+		meme->angle.g += 0.3;
+		meme->redraw_flag = 1;
+		printf("multichange\n");
+	}
 	return (0);
 }
 
@@ -223,6 +237,7 @@ int	main(int argc, char **argv)
 	meme->angle.b = 0;
 	meme->angle.g = 0;
 	meme->zoom = 30;
+	meme->redraw_flag = 0;
 	i = 0;
 	j = 0;
 	argc--;
@@ -256,6 +271,16 @@ int	main(int argc, char **argv)
 	mlx_hook(meme->win_ptr, 2, 0, key_press, meme); //debug key_press
 
 	mlx_loop(meme->mlx_ptr);
+	while (1)
+	{
+		if (meme->redraw_flag == 1)
+		{
+			blackout(meme);
+			drawmap(meme, map);
+			meme->redraw_flag = 0;
+			printf("redrawing\n");
+		}
+	}
 	return (0);
 	//[mlx_hook 2nd param][6-mousemove][5-buttonrelease][4-buttonpress]
 	//[3-keyrelease][2-keypress][1-undef][0-undef]
