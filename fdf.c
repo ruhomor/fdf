@@ -177,7 +177,7 @@ t_point	transformY(t_point point, double angle)
 	tmp.z = -point.x * sin(angle) + point.z * cos(angle);
 	return (tmp);
 }
-
+/*
 t_point	transformZ(t_point point, double angle)
 {
 	t_point	tmp;
@@ -187,10 +187,10 @@ t_point	transformZ(t_point point, double angle)
 	tmp.z = point.z;
 	return (tmp);
 }
-
+*/
 t_point transformXYZ(t_point point, t_angle angle)
 {
-	return (transformZ(transformY(transformX(point, angle.a), angle.b), angle.g));
+	return (transformY(transformX(point, angle.a), angle.b));
 }
 
 int	key_press(int keycode, void *p)
@@ -200,25 +200,35 @@ int	key_press(int keycode, void *p)
 	meme = (t_window*)p;
 	if (keycode == 126) //up
 	{
-		meme->angle.a += 0.5;
-		meme->redraw_flag = 1;
+		meme->angle.a += 0.1;
 		printf("angle a change = %lf\n", meme->angle.a);
+		mlx_clear_window(meme->mlx_ptr, meme->win_ptr);
+		//blackout(meme);
+		drawmap(meme, meme->map);
 	}
 	if (keycode == 125) //down
-		meme->angle.b += 0.5;
-		meme->redraw_flag = 1;
-		printf("angle b change = %lf\n", meme->angle.b);
+	{
+		meme->angle.a -= 0.1;
+		printf("angle a change = %lf\n", meme->angle.a);
+		//blackout(meme);
+		mlx_clear_window(meme->mlx_ptr, meme->win_ptr);
+		drawmap(meme, meme->map);
+	}
 	if (keycode == 124) //right
-		meme->angle.g += 0.5;
-		meme->redraw_flag = 1;
-		printf("angle g change = %lf\n", meme->angle.g);
+	{
+		meme->angle.b += 0.1;
+		printf("angle b change = %lf\n", meme->angle.b);
+		//blackout(meme);
+		mlx_clear_window(meme->mlx_ptr, meme->win_ptr);
+		drawmap(meme, meme->map);
+	}
 	if (keycode == 123) //left
 	{
-		meme->angle.a += 0.3;
-		meme->angle.b += 0.3;
-		meme->angle.g += 0.3;
-		meme->redraw_flag = 1;
-		printf("multichange\n");
+		meme->angle.b -= 0.1;
+		printf("angle b change = %lf\n", meme->angle.b);
+	//	blackout(meme);
+		mlx_clear_window(meme->mlx_ptr, meme->win_ptr);
+		drawmap(meme, meme->map);
 	}
 	return (0);
 }
@@ -235,9 +245,7 @@ int	main(int argc, char **argv)
 	meme->drag_flag = 0;
 	meme->angle.a = 0;
 	meme->angle.b = 0;
-	meme->angle.g = 0;
 	meme->zoom = 30;
-	meme->redraw_flag = 0;
 	i = 0;
 	j = 0;
 	argc--;
@@ -262,6 +270,7 @@ int	main(int argc, char **argv)
 	meme->win_ptr = mlx_new_window(meme->mlx_ptr, WINX, WINY, "MEME");
 	map->colorrange = map->max - map->min; //colorrange zero TODO BUG
 	drawmap(meme, map);
+	meme->map = map;
 
 	//mlx_mouse_hook(meme->win_ptr, mouse_click, meme);
 	mlx_hook(meme->win_ptr, 6, 0, mouse_move, meme);
@@ -271,16 +280,6 @@ int	main(int argc, char **argv)
 	mlx_hook(meme->win_ptr, 2, 0, key_press, meme); //debug key_press
 
 	mlx_loop(meme->mlx_ptr);
-	while (1)
-	{
-		if (meme->redraw_flag == 1)
-		{
-			blackout(meme);
-			drawmap(meme, map);
-			meme->redraw_flag = 0;
-			printf("redrawing\n");
-		}
-	}
 	return (0);
 	//[mlx_hook 2nd param][6-mousemove][5-buttonrelease][4-buttonpress]
 	//[3-keyrelease][2-keypress][1-undef][0-undef]

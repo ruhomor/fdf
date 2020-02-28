@@ -31,18 +31,7 @@ typedef struct	s_angle
 {
 	double			a;
 	double			b;
-	double			g;
 }				t_angle;
-
-typedef struct  s_window
-{
-	void		*mlx_ptr;
-	void		*win_ptr;
-	int			zoom;
-	t_angle			angle;
-	int			drag_flag;
-	int			redraw_flag;
-}				t_window;
 
 typedef struct	s_color
 {
@@ -68,6 +57,16 @@ typedef	struct	s_map
 	long int		min;
 	unsigned long int	colorrange;
 }				t_map;
+
+typedef struct  s_window
+{
+	void		*mlx_ptr;
+	void		*win_ptr;
+	int			zoom;
+	t_angle			angle;
+	int			drag_flag;
+	t_map			*map;
+}				t_window;
 
 void			maperror(t_map *map);
 t_point			transformXYZ(t_point point, t_angle angle);
