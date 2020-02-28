@@ -208,12 +208,13 @@ float  fractionalPart(int a)
     return d / s;
 }
 
-void    swap(long int *a, long int *b)
+void	swap(t_point *a, t_point *b)
 {
-    long int t;
-    t = *a;
-    *a = *b;
-    *b = t;
+	t_point t;
+
+	t = *a;
+	*a = *b;
+	*b = t;
 }
 
 void drawline(t_point start, t_point end, t_window *meme, t_map *map)
@@ -236,10 +237,7 @@ void drawline(t_point start, t_point end, t_window *meme, t_map *map)
 	if (dx == 0)
 	{
 		if (end.y < start.y)
-		{
-			swap(&start.x, &end.x);
-			swap(&start.y, &end.y);
-		}
+			swap(&start, &end);
 		cur = start;
 		while (cur.y <= end.y)
 		{
@@ -258,10 +256,7 @@ void drawline(t_point start, t_point end, t_window *meme, t_map *map)
     if (dy == 0)
     {
         if (end.x < start.x)
-        {
-            swap(&start.x, &end.x);
-            swap(&start.y, &end.y);
-        }
+            swap(&start, &end);
 	cur = start;
 	while (cur.x <= end.x)
 	{
@@ -281,10 +276,7 @@ void drawline(t_point start, t_point end, t_window *meme, t_map *map)
     {
         //The first point must have a smaller x coordinate
         if (end.x < start.x)
-        {
-            swap(&start.x, &end.x);
-            swap(&start.y, &end.y);
-        }
+            swap(&start, &end);
         grad = fracToFixed(dy, dx);
         intery = intToFixed(start.y) + grad;
 
@@ -318,10 +310,7 @@ void drawline(t_point start, t_point end, t_window *meme, t_map *map)
     else
     {
         if (end.y < start.y)
-        {
-            swap(&start.x, &end.x);
-            swap(&start.y, &end.y);
-        }
+            swap(&start, &end);
         grad = fracToFixed(dx, dy);
         interx = intToFixed(start.x) + grad;
         mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, start.x, start.y, rgbtohex(start.color, 1));
