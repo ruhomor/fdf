@@ -23,7 +23,7 @@ void		initerr(t_point d, int *e, int *e2)
 	*e2 = 0;
 }
 
-int		rgbtohex(t_color color)
+int		rgbtohex(t_color color, double alpha)
 {
 	int	hex;
 
@@ -215,13 +215,13 @@ void    swap(long int *a, long int *b)
 
 void drawline(t_point start, t_point end, t_window *meme, t_map *map)
 {
-    float alpha;
-    int color = 100;
-    int dy;
-    int dx;
-    int intery;
-    int interx;
-    int grad;
+    float 	alpha;
+    int 	dy;
+    int 	dx;
+    int 	intery;
+    int		interx;
+    int		grad;
+    t_point	cur;
 
     //The calculation of the coordinates
     dx = (end.x > start.x) ? (end.x - start.x) : (start.x - end.x);
@@ -233,10 +233,18 @@ void drawline(t_point start, t_point end, t_window *meme, t_map *map)
             swap(&start.x, &end.x);
             swap(&start.y, &end.y);
         }
+	cur = start;
+	while (cur.y <= end.y)
+	{
+		mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cur.color, 1)); //i, color TODO
+		cur.y++;
+	}
+	/*
         for (int i = start.y; i <= end.y; i++)
         {
             mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, end.x, i, color); //i, color TODO
         }
+	*/
         return;
     }
     if (dy == 0)
