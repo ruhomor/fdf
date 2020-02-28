@@ -30,7 +30,7 @@ int		rgbtohex(t_color color, double alpha)
 	//color.r = 255;
 	//color.g = 255;
 	//color.b = 255;
-	hex = ((color.r & 0xff) << 16) | ((color.g & 0xff) << 8) | (color.b & 0xff);
+	hex = (((char)(color.r * alpha) & 0xff) << 16) | (((char)(color.g * alpha) & 0xff) << 8) | ((char)(color.b * alpha) & 0xff);
 	return (hex);
 }
 
@@ -73,14 +73,17 @@ t_color		cp(t_point cur, t_point start, t_point end)
 {
 	t_color	color;
 
-	if (end.x != start.x) {
-        color.r = start.color.r + (end.color.r - start.color.r) * (cur.x - start.x) / (end.x - start.x);
-        color.g = start.color.g + (end.color.g - start.color.g) * (cur.x - start.x) / (end.x - start.x);
-        color.b = start.color.b + (end.color.b - start.color.b) * (cur.x - start.x) / (end.x - start.x);
-    } else {
-        color.r = start.color.r;
-        color.g = start.color.g;
-        color.b = start.color.b;
+	if (end.x != start.x)
+	{
+		color.r = start.color.r + (end.color.r - start.color.r) * (cur.x - start.x) / (end.x - start.x);
+		color.g = start.color.g + (end.color.g - start.color.g) * (cur.x - start.x) / (end.x - start.x);
+		color.b = start.color.b + (end.color.b - start.color.b) * (cur.x - start.x) / (end.x - start.x);
+	}
+	else
+	{
+		color.r = start.color.r;
+		color.g = start.color.g;
+		color.b = start.color.b;
 	}
 	return (color);
 }
@@ -215,37 +218,42 @@ void    swap(long int *a, long int *b)
 
 void drawline(t_point start, t_point end, t_window *meme, t_map *map)
 {
-    float 	alpha;
-    int 	dy;
-    int 	dx;
-    int 	intery;
-    int		interx;
-    int		grad;
-    t_point	cur;
+	float	alpha;
+	int	dy;
+	int	dx;
+	int	intery;
+	int	interx;
+	int	grad;
+	t_point	cur;
 
+	start.z = map->cell[start.y][start.x]; //zoom?
+	end.z = map->cell[end.y][end.x]; //zoom?
+	zoomaiso(&start, &end, meme);
     //The calculation of the coordinates
-    dx = (end.x > start.x) ? (end.x - start.x) : (start.x - end.x);
-    dy = (end.x > start.x) ? (end.y - start.y) : (start.y - end.y);
+	dx = (end.x > start.x) ? (end.x - start.x) : (start.x - end.x);
+	dy = (end.x > start.x) ? (end.y - start.y) : (start.y - end.y);
     //If the line is parallel to one of the axis, draw an usual line - fill all the pixels in a row
-    if (dx == 0) {
-        if (end.y < start.y)
-        {
-            swap(&start.x, &end.x);
-            swap(&start.y, &end.y);
-        }
-	cur = start;
-	while (cur.y <= end.y)
+	if (dx == 0)
 	{
-		mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cur.color, 1)); //i, color TODO
-		cur.y++;
-	}
+		if (end.y < start.y)
+		{
+			swap(&start.x, &end.x);
+			swap(&start.y, &end.y);
+		}
+		cur = start;
+		while (cur.y <= end.y)
+		{
+			mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cur.color, 1)); //i, color TODO
+			cur.y++;
+			cur.color = cp(cur, start, end);
+		}
 	/*
         for (int i = start.y; i <= end.y; i++)
         {
             mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, end.x, i, color); //i, color TODO
         }
 	*/
-        return;
+	return ;
     }
     if (dy == 0)
     {
@@ -254,10 +262,19 @@ void drawline(t_point start, t_point end, t_window *meme, t_map *map)
             swap(&start.x, &end.x);
             swap(&start.y, &end.y);
         }
+	cur = start;
+	while (cur.x <= end.x)
+	{
+		mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cur.color, 1));
+		cur.x++;
+		cur.color = cp(cur, start, end);
+	}
+	/*
         for (int i = start.x; i <= end.x; i++) {
             mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, i, start.y, color); //i, color TODO
         }
-        return;
+	*/
+	return ;
     }
     //For the X-line (slope coefficient < 1)
     if (abs(dy) < dx)
@@ -272,8 +289,20 @@ void drawline(t_point start, t_point end, t_window *meme, t_map *map)
         intery = intToFixed(start.y) + grad;
 
         //First point
-        mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, start.x, start.y, color);
-
+        mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, start.x, start.y, rgbtohex(start.color, 1));
+	cur = start;
+	cur.x++;
+	while (cur.x < end.x)
+	{
+		alpha = (fractionalPart(intery));
+		cur.y = fixedToInt(intery);
+		mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cur.color, alpha));
+		mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y + 1, (rgbtohex(cur.color, 1 - alpha)));
+		intery += grad;
+		cur.x++;
+		cur.color = cp(cur, start, end);
+	}
+	/*
         for (int x = start.x + 1; x < end.x; x++)
         {
             alpha = (fractionalPart(intery));
@@ -281,8 +310,9 @@ void drawline(t_point start, t_point end, t_window *meme, t_map *map)
             mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, x, fixedToInt(intery) +1, (rgbtohex(255 * (1- alpha), 255 * (1 - alpha), 255 * (1 - alpha))));
             intery += grad;
         }
+	*/
         //Last point
-        mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, end.x, end.y, color);
+        mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, end.x, end.y, rgbtohex(end.color, 1));
     }
         //For the Y-line (slope coefficient > 1)
     else
@@ -292,16 +322,30 @@ void drawline(t_point start, t_point end, t_window *meme, t_map *map)
             swap(&start.x, &end.x);
             swap(&start.y, &end.y);
         }
-        grad = fracToFixed(dx , dy);
+        grad = fracToFixed(dx, dy);
         interx = intToFixed(start.x) + grad;
-        mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, start.x, start.y, color);
+        mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, start.x, start.y, rgbtohex(start.color, 1));
+	cur = start;
+	cur.y++;
+	while (cur.y < end.y)
+	{
+            alpha = (fractionalPart(interx));
+	    cur.x = fixedToInt(interx);
+            mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cur.color, alpha));
+            mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x + 1, cur.y, rgbtohex(cur.color, 1 - alpha));
+            interx += grad;
+	    cur.y++;
+	    cur.color = cp(cur, start, end);
+	}
+	/*
         for (int y = start.y + 1; y < end.y; y++)
         {
             alpha = (fractionalPart(interx));
-            mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, fixedToInt(interx), y,  rgbtohex(255 * alpha, 255 * alpha, 255 * alpha));
-            mlx_pixel_put(meme->mlx_ptr, meme->win_ptr,  fixedToInt(interx) + 1, y,  (rgbtohex(255 * (1 - alpha), 255 * (1 - alpha), 255 * (1 - alpha))));
+            mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, fixedToInt(interx), cur.y,  rgbtohex(cur.color, alpha));
+            mlx_pixel_put(meme->mlx_ptr, meme->win_ptr,  fixedToInt(interx) + 1, cur.y,  (rgbtohex(cur.color, 1 - alpha)));
             interx += grad;
         }
-        mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, end.x, start.y, color);
+	*/
+        mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, end.x, end.y, rgbtohex(end.color, 1)); //end.y - start.y?
     }
 }
