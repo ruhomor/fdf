@@ -21,6 +21,7 @@ void	maperror(t_map *map)
 		}
 		free(map);
 		map = NULL;
+		exit(0);
 	}
 }
 

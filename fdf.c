@@ -258,7 +258,15 @@ int	key_press1(int keycode, void *p)
 		meme->shift.l_flag = (meme->shift.l_flag == 1) ? 0 : -1;
 		printf("shiftx change = %ld\n", meme->shift.x);
 	}
-	meme->shift.x += meme->shift.r_flag + meme->shift.l_flag;
+	if (keycode == 69)
+    {
+	    meme->attitude += 1;
+    }
+	if (keycode == 78)
+    {
+	    meme->attitude -= 1;
+    }
+	meme->shift.x += meme->shift.r_flag + meme->shift.l_flag; //TODO put inside if
 	meme->shift.y += meme->shift.u_flag + meme->shift.d_flag;
 	mlx_clear_window(meme->mlx_ptr, meme->win_ptr);
 	drawmap(meme, meme->map);
@@ -303,15 +311,14 @@ int	main(int argc, char **argv)
 
 	meme = (t_window*)malloc(sizeof(*meme));
 	meme->drag_flag = 0;
-	meme->shift.x = 600;
-	meme->shift.y = 300;
 	meme->shift.r_flag = 0;
 	meme->shift.l_flag = 0;
     meme->shift.u_flag = 0;
     meme->shift.d_flag = 0;
 	meme->angle.a = 0;
 	meme->angle.b = 0;
-	meme->zoom = 30;
+	meme->zoom = 2;
+	meme->attitude = 1;
 	i = 0;
 	j = 0;
 	argc--;
@@ -319,7 +326,9 @@ int	main(int argc, char **argv)
 	map->cell = NULL;
 	//readmap(map, "test1");
 	readmap(map, argv[1]);
-	colorrange = map->max - map->min; //debug
+    meme->shift.x = WINX / 2 - map->width / 2;
+    meme->shift.y = WINY / 2 - map->height / 2;
+	colorrange = map->max - map->min; //debug TODO BUG
 	while (i < map->height)
 	{
 		j = 0;

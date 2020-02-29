@@ -77,6 +77,7 @@ typedef struct  s_window
 	int			drag_flag;
 	t_map			*map;
 	t_shift         shift;
+	int             attitude;
 }				t_window;
 
 void			maperror(t_map *map);

@@ -50,6 +50,9 @@ void		zoomaiso(t_point *start, t_point *end, t_window *meme)
 	end->y *= zoom;
 	end->z *= zoom; //z -? TODO h
 
+    start->z *= meme->attitude;
+    end->z *= meme->attitude;
+
 	end->x -= meme->map->width / 2 * zoom;
 	end->y -= meme->map->height / 2 * zoom;
 	start->x -= meme->map->width / 2 * zoom;
@@ -241,6 +244,20 @@ void	swap(t_point *a, t_point *b)
 	*b = t;
 }
 
+long int    ft_min(long int a, long int b)
+{
+    if (a > b)
+        return (b);
+    return (a);
+}
+
+long int    ft_max(long int a, long int b)
+{
+    if (a > b)
+        return (a);
+    return (b);
+}
+
 void drawline(t_point start, t_point end, t_window *meme, t_map *map)
 {
 	float	alpha;
@@ -258,7 +275,7 @@ void drawline(t_point start, t_point end, t_window *meme, t_map *map)
 	dx = (end.x > start.x) ? (end.x - start.x) : (start.x - end.x);
 	dy = (end.x > start.x) ? (end.y - start.y) : (start.y - end.y);
     //If the line is parallel to one of the axis, draw an usual line - fill all the pixels in a row
-	if (dx == 0)
+	if ((dx == 0) && (start.x >= 0) && (start.x <= WINX) && (ft_min(start.y, end.y) <= WINY) && (ft_max(start.y, end.y >= 0)))
 	{
 		if (end.y < start.y)
 			swap(&start, &end);
@@ -277,7 +294,7 @@ void drawline(t_point start, t_point end, t_window *meme, t_map *map)
 	*/
 	    return ;
     }
-    if (dy == 0)
+    if (dy == 0 && (start.y >= 0) && (start.y <= WINY) && (ft_min(start.x, end.x) <= WINX) && (ft_max(start.x, end.x) >= 0))
     {
         if (end.x < start.x)
             swap(&start, &end);
@@ -301,64 +318,68 @@ void drawline(t_point start, t_point end, t_window *meme, t_map *map)
         //The first point must have a smaller x coordinate
         if (end.x < start.x)
             swap(&start, &end);
-        grad = fracToFixed(dy, dx);
-        intery = intToFixed(start.y) + grad;
-
-        //First point
-        mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, start.x, start.y, rgbtohex(start.color, 1));
-	cur = start;
-	cur.x++;
-	while (cur.x < end.x)
-	{
-		alpha = (fractionalPart(intery));
-		cur.y = fixedToInt(intery);
-		mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cur.color, alpha));
-		mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y + 1, (rgbtohex(cur.color, 1 - alpha)));
-		intery += grad;
-		cur.x++;
-		cur.color = cpx(cur, start, end);
-	}
-	/*
-        for (int x = start.x + 1; x < end.x; x++)
+        if ((start.x <= WINX) && (end.x >= 0) && (ft_min(start.y, end.y) <= WINY) && (ft_max(start.y, end.y) >= 0)) //TODO dopisat
         {
-            alpha = (fractionalPart(intery));
-            mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, x, fixedToInt(intery), rgbtohex(255 * alpha, 255 * alpha, 255 * alpha));
-            mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, x, fixedToInt(intery) +1, (rgbtohex(255 * (1- alpha), 255 * (1 - alpha), 255 * (1 - alpha))));
-            intery += grad;
+            grad = fracToFixed(dy, dx);
+            intery = intToFixed(start.y) + grad;
+
+            //First point
+            mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, start.x, start.y, rgbtohex(start.color, 1));
+            cur = start;
+            cur.x++;
+            while (cur.x < end.x)
+            {
+                alpha = (fractionalPart(intery));
+                cur.y = fixedToInt(intery);
+                mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cur.color, alpha));
+                mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y + 1, (rgbtohex(cur.color, 1 - alpha)));
+                intery += grad;
+                cur.x++;
+                cur.color = cpx(cur, start, end);
+            }
+            /*
+                for (int x = start.x + 1; x < end.x; x++)
+                {
+                    alpha = (fractionalPart(intery));
+                    mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, x, fixedToInt(intery), rgbtohex(255 * alpha, 255 * alpha, 255 * alpha));
+                    mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, x, fixedToInt(intery) +1, (rgbtohex(255 * (1- alpha), 255 * (1 - alpha), 255 * (1 - alpha))));
+                    intery += grad;
+                }
+            */
+            //Last point
+            mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, end.x, end.y, rgbtohex(end.color, 1));
         }
-	*/
-        //Last point
-        mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, end.x, end.y, rgbtohex(end.color, 1));
     }
         //For the Y-line (slope coefficient > 1)
-    else
-    {
+    else {
         if (end.y < start.y)
             swap(&start, &end);
-        grad = fracToFixed(dx, dy);
-        interx = intToFixed(start.x) + grad;
-        mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, start.x, start.y, rgbtohex(start.color, 1));
-	cur = start;
-	cur.y++;
-	while (cur.y < end.y)
-	{
-            alpha = (fractionalPart(interx));
-	    cur.x = fixedToInt(interx);
-            mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cur.color, alpha));
-            mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x + 1, cur.y, rgbtohex(cur.color, 1 - alpha));
-            interx += grad;
-	    cur.y++;
-	    cur.color = cpy(cur, start, end);
-	}
-	/*
-        for (int y = start.y + 1; y < end.y; y++)
+        if ((start.y <= WINY) && (end.y >= 0) && (ft_min(start.x, end.x) <= WINX) && (ft_max(start.x, end.x) >= 0)) //TODO dopisat
         {
-            alpha = (fractionalPart(interx));
-            mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, fixedToInt(interx), cur.y,  rgbtohex(cur.color, alpha));
-            mlx_pixel_put(meme->mlx_ptr, meme->win_ptr,  fixedToInt(interx) + 1, cur.y,  (rgbtohex(cur.color, 1 - alpha)));
-            interx += grad;
+            grad = fracToFixed(dx, dy);
+            interx = intToFixed(start.x) + grad;
+            mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, start.x, start.y, rgbtohex(start.color, 1));
+            cur = start;
+            cur.y++;
+            while (cur.y < end.y) {
+                alpha = (fractionalPart(interx));
+                cur.x = fixedToInt(interx);
+                mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cur.color, alpha));
+                mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x + 1, cur.y, rgbtohex(cur.color, 1 - alpha));
+                interx += grad;
+                cur.y++;
+                cur.color = cpy(cur, start, end);
+            }
+            /*
+                for (int y = start.y + 1; y < end.y; y++)
+                {
+                    alpha = (fractionalPart(interx));
+                    mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, fixedToInt(interx), cur.y,  rgbtohex(cur.color, alpha));
+                    mlx_pixel_put(meme->mlx_ptr, meme->win_ptr,  fixedToInt(interx) + 1, cur.y,  (rgbtohex(cur.color, 1 - alpha)));
+                    interx += grad;
+                }
+            */
+            mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, end.x, end.y, rgbtohex(end.color, 1)); //end.y - start.y?
         }
-	*/
-        mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, end.x, end.y, rgbtohex(end.color, 1)); //end.y - start.y?
     }
 }
