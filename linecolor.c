@@ -331,8 +331,8 @@ void drawline(t_point start, t_point end, t_window *meme, t_map *map)
             {
                 alpha = (fractionalPart(intery));
                 cur.y = fixedToInt(intery);
-                mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cur.color, alpha));
-                mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y + 1, (rgbtohex(cur.color, 1 - alpha)));
+                mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cur.color, 1 - alpha));
+                mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y + 1, (rgbtohex(cur.color, alpha)));
                 intery += grad;
                 cur.x++;
                 cur.color = cpx(cur, start, end);
@@ -364,8 +364,8 @@ void drawline(t_point start, t_point end, t_window *meme, t_map *map)
             while (cur.y < end.y) {
                 alpha = (fractionalPart(interx));
                 cur.x = fixedToInt(interx);
-                mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cur.color, alpha));
-                mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x + 1, cur.y, rgbtohex(cur.color, 1 - alpha));
+                mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cur.color, 1 - alpha));
+                mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x + 1, cur.y, rgbtohex(cur.color, alpha));
                 interx += grad;
                 cur.y++;
                 cur.color = cpy(cur, start, end);
