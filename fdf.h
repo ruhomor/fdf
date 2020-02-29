@@ -94,5 +94,8 @@ void			drawline(t_point start, t_point end, t_window *meme, t_map *map);
 void			drawmap(t_window *meme, t_map *map);
 t_color			pp(t_map *map, int x, int y, int zoom);
 void			blackout(t_window *meme);
+void            triangle1(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map);
+void            triangle2(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map);
+
 
 #endif

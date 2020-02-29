@@ -378,7 +378,7 @@ void	blackout(t_window *meme)
 		j++;
 	}
 }
-
+/*
 void	drawmap(t_window *meme, t_map *map)
 {
 	int	i;
@@ -408,4 +408,41 @@ void	drawmap(t_window *meme, t_map *map)
 	while (++j < map->height - 1)
 		drawline((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
 				(t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)}, meme, map);
+}
+*/
+void	drawmap(t_window *meme, t_map *map)
+{
+    int	i;
+    int	j;
+
+    j = 0;
+    while (j < map->height - 1)
+    {
+        i = 0;
+        while (i < map->width - 1)
+        {
+            drawline((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
+                     (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
+            drawline((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
+                     (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)}, meme, map);
+            triangle1((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
+                     (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)},
+                     (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
+            //triangle2((t_point){.x = i + 1, .y = j + 1, .color = pp(map, i, j, 1)}, //TODO fix dis
+            //         (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)},
+            //         (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
+            i++;
+        }
+        j++;
+    }
+    j = map->height - 1; // 1 1 1
+    i = -1;		     // 1 1 1 //
+    while (++i < map->width - 1)
+        drawline((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
+                 (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
+    i = map->width - 1;
+    j = -1;
+    while (++j < map->height - 1)
+        drawline((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
+                 (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)}, meme, map);
 }

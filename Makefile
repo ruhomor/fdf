@@ -16,7 +16,7 @@ NAME = fdf
 
 CFILES = fdf \
 		readmap \
-		linecolor
+		linecolornew
 
 FW = -framework OpenGL -framework AppKit
 
