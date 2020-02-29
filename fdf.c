@@ -169,6 +169,19 @@ int	mouse_press(int button, int x, int y, void *p)
 		meme->drag_flag = 1;
 		ft_xy(x, y);
 	}
+    if (button == 4) //scroll up
+    {
+        meme->zoom += 1;
+        mlx_clear_window(meme->mlx_ptr, meme->win_ptr);
+        drawmap(meme, meme->map);
+    }
+    if (button == 5) //scroll down
+    {
+        meme->zoom -= 1;
+        mlx_clear_window(meme->mlx_ptr, meme->win_ptr);
+        drawmap(meme, meme->map);
+
+    }
 	return (0);
 }
 
@@ -220,44 +233,64 @@ t_point transformXYZ(t_point point, t_angle angle)
 	return (transformY(transformX(point, angle.a), angle.b));
 }
 
-int	key_press(int keycode, void *p)
+int	key_press1(int keycode, void *p)
 {
 	t_window	*meme;
 
 	meme = (t_window*)p;
 	if (keycode == 126) //up
 	{
-		meme->angle.a += 0.1;
-		printf("angle a change = %lf\n", meme->angle.a);
-		mlx_clear_window(meme->mlx_ptr, meme->win_ptr);
-		//blackout(meme);
-		drawmap(meme, meme->map);
+        meme->shift.u_flag = (meme->shift.u_flag == 1) ? 0 : -1;
+		printf("shifty change = %ld\n", meme->shift.y);
 	}
 	if (keycode == 125) //down
 	{
-		meme->angle.a -= 0.1;
-		printf("angle a change = %lf\n", meme->angle.a);
-		//blackout(meme);
-		mlx_clear_window(meme->mlx_ptr, meme->win_ptr);
-		drawmap(meme, meme->map);
+        meme->shift.d_flag = (meme->shift.d_flag == -1) ? 0 : 1;
+		printf("shifty change = %ld\n", meme->shift.y);
 	}
 	if (keycode == 124) //right
 	{
-		meme->angle.b += 0.1;
-		printf("angle b change = %lf\n", meme->angle.b);
-		//blackout(meme);
-		mlx_clear_window(meme->mlx_ptr, meme->win_ptr);
-		drawmap(meme, meme->map);
+        meme->shift.r_flag = (meme->shift.r_flag == -1) ? 0 : 1;
+		printf("shiftx change = %ld\n", meme->shift.x);
 	}
 	if (keycode == 123) //left
 	{
-		meme->angle.b -= 0.1;
-		printf("angle b change = %lf\n", meme->angle.b);
-	//	blackout(meme);
-		mlx_clear_window(meme->mlx_ptr, meme->win_ptr);
-		drawmap(meme, meme->map);
+		meme->shift.l_flag = (meme->shift.l_flag == 1) ? 0 : -1;
+		printf("shiftx change = %ld\n", meme->shift.x);
 	}
+	meme->shift.x += meme->shift.r_flag + meme->shift.l_flag;
+	meme->shift.y += meme->shift.u_flag + meme->shift.d_flag;
+	mlx_clear_window(meme->mlx_ptr, meme->win_ptr);
+	drawmap(meme, meme->map);
 	return (0);
+}
+
+int	key_release1(int keycode, void *p)
+{
+    t_window	*meme;
+
+    meme = (t_window*)p;
+    if (keycode == 126) //up
+    {
+        meme->shift.u_flag = (meme->shift.u_flag == -1) ? 0 : 1;
+        printf("shifty change = %ld\n", meme->shift.y);
+    }
+    if (keycode == 125) //down
+    {
+        meme->shift.d_flag = (meme->shift.d_flag == 1) ? 0 : -1;
+        printf("shifty change = %ld\n", meme->shift.y);
+    }
+    if (keycode == 124) //right
+    {
+        meme->shift.r_flag = (meme->shift.r_flag == 1) ? 0 : -1;
+        printf("shiftx change = %ld\n", meme->shift.x);
+    }
+    if (keycode == 123) //left
+    {
+        meme->shift.l_flag = (meme->shift.l_flag == -1) ? 0 : 1;
+        printf("shiftx change = %ld\n", meme->shift.x);
+    }
+    return (0);
 }
 
 int	main(int argc, char **argv)
@@ -270,6 +303,12 @@ int	main(int argc, char **argv)
 
 	meme = (t_window*)malloc(sizeof(*meme));
 	meme->drag_flag = 0;
+	meme->shift.x = 600;
+	meme->shift.y = 300;
+	meme->shift.r_flag = 0;
+	meme->shift.l_flag = 0;
+    meme->shift.u_flag = 0;
+    meme->shift.d_flag = 0;
 	meme->angle.a = 0;
 	meme->angle.b = 0;
 	meme->zoom = 30;
@@ -304,7 +343,8 @@ int	main(int argc, char **argv)
 	mlx_hook(meme->win_ptr, 4, 0, mouse_press, meme);
 	mlx_hook(meme->win_ptr, 5, 0, mouse_release, meme);
 
-	mlx_hook(meme->win_ptr, 2, 0, key_press, meme); //debug key_press
+	mlx_hook(meme->win_ptr, 2, 0, key_press1, meme); //debug key_press
+    mlx_hook(meme->win_ptr, 3, 0, key_release1, meme);
 
 	mlx_loop(meme->mlx_ptr);
 	return (0);

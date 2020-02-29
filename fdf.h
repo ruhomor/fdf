@@ -20,12 +20,22 @@
 # include <unistd.h>
 # include <math.h>
 # include "minilibx_macos/mlx.h"
-# define MIN 2147483647
+# define MIN 2147483647 //TODO
 # define MAX -2147483648
 
 # define BUFF_MSIZE 4
 # define WINX 2000
 # define WINY 1000
+
+typedef struct  s_shift
+{
+    long int        x;
+    long int        y;
+    long int        u_flag;
+    long int        d_flag;
+    long int        l_flag;
+    long int        r_flag;
+}               t_shift;
 
 typedef struct	s_angle
 {
@@ -66,6 +76,7 @@ typedef struct  s_window
 	t_angle			angle;
 	int			drag_flag;
 	t_map			*map;
+	t_shift         shift;
 }				t_window;
 
 void			maperror(t_map *map);

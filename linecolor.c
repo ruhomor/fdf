@@ -45,10 +45,10 @@ void		zoomaiso(t_point *start, t_point *end, t_window *meme)
 	zoom = meme->zoom; //ZOOM Section
 	start->x *= zoom;
 	start->y *= zoom;
-	start->z *= zoom; //z -?
+	start->z *= zoom; //z -? TODO h
 	end->x *= zoom;
 	end->y *= zoom;
-	end->z *= zoom; //z -?
+	end->z *= zoom; //z -? TODO h
 
 	end->x -= meme->map->width / 2 * zoom;
 	end->y -= meme->map->height / 2 * zoom;
@@ -63,10 +63,10 @@ void		zoomaiso(t_point *start, t_point *end, t_window *meme)
 	*end = transformXYZ(*end, meme->angle); //bred bug
 	end->color = bcolor;
 
-	start->x += 600; //xy shift
-	start->y += 300;
-	end->x += 600;
-	end->y += 300;
+	start->x += meme->shift.x; //xy shift
+	start->y += meme->shift.y;
+	end->x += meme->shift.x;
+	end->y += meme->shift.y;
 /*
 	start->x = (start->x - start->y) * cos(ugol); //Z-axis section
 	start->y = (start->y + start->x) * sin(ugol) - start->z;
@@ -75,7 +75,7 @@ void		zoomaiso(t_point *start, t_point *end, t_window *meme)
 */
 }
 
-t_color		cp(t_point cur, t_point start, t_point end)
+t_color		cpx(t_point cur, t_point start, t_point end)
 {
 	t_color	color;
 
@@ -86,12 +86,30 @@ t_color		cp(t_point cur, t_point start, t_point end)
 		color.b = start.color.b + (end.color.b - start.color.b) * (cur.x - start.x) / (end.x - start.x);
 	}
 	else
-	{
-		color.r = start.color.r;
-		color.g = start.color.g;
-		color.b = start.color.b;
-	}
+	    {
+        color.r = start.color.r;
+        color.g = start.color.g;
+        color.b = start.color.b;
+    }
 	return (color);
+}
+
+t_color		cpy(t_point cur, t_point start, t_point end)
+{
+    t_color	color;
+
+     if (end.y != start.y)
+    {
+        color.r = start.color.r + (end.color.r - start.color.r) * (cur.y - start.y) / (end.y - start.y);
+        color.g = start.color.g + (end.color.g - start.color.g) * (cur.y - start.y) / (end.y - start.y);
+        color.b = start.color.b + (end.color.b - start.color.b) * (cur.y - start.y) / (end.y - start.y);
+    }
+    else {
+        color.r = start.color.r;
+        color.g = start.color.g;
+        color.b = start.color.b;
+    }
+    return (color);
 }
 /*
 void		drawline(t_point start, t_point end, t_window *meme, t_map *map) //start and end r wot?
@@ -249,7 +267,7 @@ void drawline(t_point start, t_point end, t_window *meme, t_map *map)
 		{
 			mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cur.color, 1)); //i, color TODO
 			cur.y++;
-			cur.color = cp(cur, start, end);
+			cur.color = cpy(cur, end, start); //>>>>>TODO
 		}
 	/*
         for (int i = start.y; i <= end.y; i++)
@@ -257,7 +275,7 @@ void drawline(t_point start, t_point end, t_window *meme, t_map *map)
             mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, end.x, i, color); //i, color TODO
         }
 	*/
-	return ;
+	    return ;
     }
     if (dy == 0)
     {
@@ -268,14 +286,14 @@ void drawline(t_point start, t_point end, t_window *meme, t_map *map)
 	{
 		mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cur.color, 1));
 		cur.x++;
-		cur.color = cp(cur, start, end);
+		cur.color = cpx(cur, start, end);
 	}
 	/*
         for (int i = start.x; i <= end.x; i++) {
             mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, i, start.y, color); //i, color TODO
         }
 	*/
-	return ;
+	    return ;
     }
     //For the X-line (slope coefficient < 1)
     if (abs(dy) < dx)
@@ -298,7 +316,7 @@ void drawline(t_point start, t_point end, t_window *meme, t_map *map)
 		mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y + 1, (rgbtohex(cur.color, 1 - alpha)));
 		intery += grad;
 		cur.x++;
-		cur.color = cp(cur, start, end);
+		cur.color = cpx(cur, start, end);
 	}
 	/*
         for (int x = start.x + 1; x < end.x; x++)
@@ -330,7 +348,7 @@ void drawline(t_point start, t_point end, t_window *meme, t_map *map)
             mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x + 1, cur.y, rgbtohex(cur.color, 1 - alpha));
             interx += grad;
 	    cur.y++;
-	    cur.color = cp(cur, start, end);
+	    cur.color = cpy(cur, start, end);
 	}
 	/*
         for (int y = start.y + 1; y < end.y; y++)
