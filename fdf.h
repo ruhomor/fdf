@@ -70,6 +70,8 @@ typedef struct  s_window
 
 void			maperror(t_map *map);
 t_point			transformXYZ(t_point point, t_angle angle);
+t_point			transformX(t_point point, double angle);
+t_point			transformY(t_point point, double angle);
 long int			**addline(t_map *map, long int *arr);
 long int			*reallocints(long int **ptr, int msize, long int *arr);
 int				ft_ints(char *mapline, t_map *map);

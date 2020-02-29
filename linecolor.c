@@ -40,7 +40,7 @@ void		zoomaiso(t_point *start, t_point *end, t_window *meme)
 	double	ugol;
 	t_color	bcolor;
 
-	ugol = 0.0;
+	ugol = 0.5;
 
 	zoom = meme->zoom; //ZOOM Section
 	start->x *= zoom;
@@ -50,6 +50,11 @@ void		zoomaiso(t_point *start, t_point *end, t_window *meme)
 	end->y *= zoom;
 	end->z *= zoom; //z -?
 
+	end->x -= meme->map->width / 2 * zoom;
+	end->y -= meme->map->height / 2 * zoom;
+	start->x -= meme->map->width / 2 * zoom;
+	start->y -= meme->map->height / 2 * zoom;
+
 	bcolor = start->color; //starting point rotation
 	*start = transformXYZ(*start, meme->angle); //TODO zero exception??? crush
 	start->color = bcolor;
@@ -58,15 +63,16 @@ void		zoomaiso(t_point *start, t_point *end, t_window *meme)
 	*end = transformXYZ(*end, meme->angle); //bred bug
 	end->color = bcolor;
 
-    start->x = (start->x - start->y) * cos(ugol); //Z-axis section
-    start->y = (start->y + start->x) * sin(ugol) - start->z;
-    end->x = (end->x - end->y) * cos(ugol);
-    end->y = (end->y + end->x) * sin(ugol) - end->z;
-
 	start->x += 600; //xy shift
 	start->y += 300;
 	end->x += 600;
 	end->y += 300;
+/*
+	start->x = (start->x - start->y) * cos(ugol); //Z-axis section
+	start->y = (start->y + start->x) * sin(ugol) - start->z;
+	end->x = (end->x - end->y) * cos(ugol);
+	end->y = (end->y + end->x) * sin(ugol) - end->z;
+*/
 }
 
 t_color		cp(t_point cur, t_point start, t_point end)

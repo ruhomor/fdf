@@ -126,13 +126,35 @@ t_color	pp(t_map *map, int x, int y, int zoom)
 	return (HsvToRgb(color));
 }
 
+t_point ft_xy(int x, int y)
+{
+    static t_point point0 = {0, 0, 0, {0, 0, 0}};
+    static t_point point;
+    point = point0;
+    point0.x = x;
+    point0.y = y;
+    return (point);
+}
+
 int	mouse_move(int x, int y, void *p)
 {
 	t_window	*meme;
+	t_point     point;
+	double      da;
+	double      db;
 
 	meme = (t_window*)p;
+	point = ft_xy(x, y);
+	db = (point.x != 0) ? (double)(x - point.x) / point.x : 0;
+	da = (point.y != 0) ? (double)(y - point.y) / point.y : 0;
 	if (meme->drag_flag == 1)
-		printf("Dragging in MEME, at %dx%d.\n", x, y);
+	{
+		printf("Dragging in MEME, at %dx%d %fx%f.\n", x, y, da, db);
+        meme->angle.a += da;
+        meme->angle.b += db;
+        mlx_clear_window(meme->mlx_ptr, meme->win_ptr);
+        drawmap(meme, meme->map);
+	}
 	return (0);
 }
 
@@ -143,7 +165,10 @@ int	mouse_press(int button, int x, int y, void *p)
 	meme = (t_window*)p;
 	printf("Pressed in MEME, button %d at %dx%d.\n", button, x, y);
 	if (button == 1)
+	{
 		meme->drag_flag = 1;
+		ft_xy(x, y);
+	}
 	return (0);
 }
 
@@ -154,7 +179,9 @@ int	mouse_release(int button, int x, int y, void *p)
 	meme = (t_window*)p;
 	printf("Released in MEME, button %d at %dx%d.\n", button, x, y);
 	if (button == 1)
+	{
 		meme->drag_flag = 0;
+	}
 	return (0);
 }
 
@@ -269,9 +296,9 @@ int	main(int argc, char **argv)
 	meme->mlx_ptr = mlx_init();
 	meme->win_ptr = mlx_new_window(meme->mlx_ptr, WINX, WINY, "MEME");
 	map->colorrange = map->max - map->min; //colorrange zero TODO BUG
-	drawmap(meme, map);
-	meme->map = map;
 
+	meme->map = map;
+	drawmap(meme, map);
 	//mlx_mouse_hook(meme->win_ptr, mouse_click, meme);
 	mlx_hook(meme->win_ptr, 6, 0, mouse_move, meme);
 	mlx_hook(meme->win_ptr, 4, 0, mouse_press, meme);
