@@ -433,12 +433,12 @@ void triangle2(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map)
 
 void trianglebuf(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map)
 {
-    long int    total_height;
-    long int    i;
-    long int    j;
-    char        second_half;
-    long int    segment_height;
-    float       alpha;
+	long int	total_height;
+	long int	i;
+	long int	j;
+	char		second_half;
+	long int	segment_height;
+	float		alpha;
     float       beta;
     t_point     a;
     t_point     b;
@@ -456,7 +456,7 @@ void trianglebuf(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map)
     zoomaiso(&t2, meme);
 
     if (t0.y == t1.y && t0.y == t2.y)
-        return; // i dont care about degenerate triangles
+        return ; // i dont care about degenerate triangles
     if (t0.y > t1.y)
         swap(&t0, &t1);
     if (t0.y > t2.y)
@@ -470,7 +470,7 @@ void trianglebuf(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map)
         second_half = i > t1.y - t0.y || t1.y == t0.y;
         segment_height = second_half ? t2.y - t1.y : t1.y - t0.y;
         alpha = (float)i / total_height;
-        beta  = (float)(i - (second_half ? t1.y - t0.y : 0)) / segment_height; // be careful: with above conditions no division by zero here
+        beta = (float)(i - (second_half ? t1.y - t0.y : 0)) / segment_height; // be careful: with above conditions no division by zero here
         //Vec3i A =               t0 + Vec3f(t2-t0)*alpha;
         //Vec3i B = second_half ? t1 + Vec3f(t2-t1)*beta : t0 + Vec3f(t1-t0)*beta;
         a.x = t0.x + ((float)(t2.x - t0.x)) * alpha;
@@ -490,7 +490,7 @@ void trianglebuf(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map)
         j = a.x;
         while (j <= b.x)
         {
-            phi = b.x == a.x ? 1. : (float) (j - a.x) / (float)(b.x - a.x);
+            phi = b.x == a.x ? 1. : (float)(j - a.x) / (float)(b.x - a.x);
             //cur = (float)a + ((float)(b - a)) * phi;
             cur.x = (float)a.x + ((float)(b.x - a.x)) * phi;
             cur.y = (float)a.y + ((float)(b.y - a.y)) * phi;
@@ -499,8 +499,9 @@ void trianglebuf(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map)
             cur.color.g = (float)a.color.g + ((float)(b.color.g - a.color.g)) * phi;
             cur.color.b = (float)a.color.b + ((float)(b.color.b - a.color.b)) * phi;
             idx = cur.x + cur.y * WINX;
-            if (zbuf[idx] < cur.z)
+            if ((cur.x >= 0) && (cur.y >= 0) && (cur.x < WINX) && (cur.y < WINY) && (zbuf[idx] < cur.z))
             {
+		    printf("idx: %ld", idx);
                 zbuf[idx] = cur.z;
                 mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cpx(cur, a, b), 1));
                 //image.set(P.x, P.y, color);
