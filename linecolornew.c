@@ -262,13 +262,16 @@ void drawlinecool(t_point start, t_point end, t_window *meme, t_map *map)
 */
 void drawline(t_point start, t_point end, t_window *meme, t_map *map)
 {
-    char steep;
-    int dx;
-    int dy;
-    int derror2;
-    int error2;
-    t_point cur;
+    char        steep;
+    long int    dx;
+    long int    dy;
+    long int    derror2;
+    long int    error2;
+    t_point     cur;
+    long int    idx;
+    long int    *zbuf;
 
+    zbuf = meme->zbuf;
     start.z = map->cell[start.y][start.x]; //zoom?
     end.z = map->cell[end.y][end.x]; //zoom?
     zoomaiso(&start, meme);
@@ -286,22 +289,23 @@ void drawline(t_point start, t_point end, t_window *meme, t_map *map)
     }
     dx = end.x - start.x;
     dy = end.y - start.y;
-    derror2 = abs(dy) * 2;
+    derror2 = labs(dy) * 2;
     error2 = 0;
     cur = start;
     while (cur.x <= end.x)
     {
-        if (steep) 
+        idx = cur.x + cur.y * WINX;
+        if ((cur.x >= 0) && (cur.y >= 0) && (cur.x < WINX) && (cur.y < WINY) && (zbuf[idx] < cur.z))
         {
-            mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.y, cur.x, rgbtohex(cur.color, 1));
-            //image.set(y, x, color);
-            cur.color = cpx(cur, start, end);
-        } 
-        else
-        {
-            //image.set(x, y, color);
-            mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cur.color, 1));
-            cur.color = cpy(cur, start, end);
+            if (steep) {
+                mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.y, cur.x, rgbtohex(cur.color, 1));
+                //image.set(y, x, color);
+                cur.color = cpx(cur, start, end);
+            } else {
+                //image.set(x, y, color);
+                mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cur.color, 1));
+                cur.color = cpy(cur, start, end);
+            }
         }
         error2 += derror2;
         if (error2 > dx) 
@@ -501,7 +505,7 @@ void trianglebuf(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map)
             idx = cur.x + cur.y * WINX;
             if ((cur.x >= 0) && (cur.y >= 0) && (cur.x < WINX) && (cur.y < WINY) && (zbuf[idx] < cur.z))
             {
-		    printf("idx: %ld", idx);
+		        printf("idx: %ld zbuf: %ld x: %ld y: %ld z: %ld\n", idx, zbuf[idx], cur.x, cur.y, cur.z);
                 zbuf[idx] = cur.z;
                 mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cpx(cur, a, b), 1));
                 //image.set(P.x, P.y, color);

@@ -307,7 +307,7 @@ void    initbuf(long int *arr, long int size)
 
     i = -1;
     while (++i < size)
-        *arr++ = MIN;
+        *arr++ = MAX;
 }
 
 int	main(int argc, char **argv)
@@ -456,4 +456,5 @@ void	drawmap(t_window *meme, t_map *map)
     while (++j < map->height - 1)
         drawline((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
                  (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)}, meme, map);
+    initbuf(meme->zbuf, WINX * WINY);
 }
