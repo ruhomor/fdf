@@ -76,6 +76,7 @@ typedef struct  s_window
 	t_angle			angle;
 	int			drag_flag;
 	t_map			*map;
+	long int        *zbuf;
 	t_shift         shift;
 	int             attitude;
 }				t_window;
@@ -96,6 +97,6 @@ t_color			pp(t_map *map, int x, int y, int zoom);
 void			blackout(t_window *meme);
 void            triangle1(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map);
 void            triangle2(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map);
-
+void            trianglebuf(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map);
 
 #endif

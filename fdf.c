@@ -301,6 +301,15 @@ int	key_release1(int keycode, void *p)
     return (0);
 }
 
+void    initbuf(long int *arr, long int size)
+{
+    long int    i;
+
+    i = -1;
+    while (++i < size)
+        *arr++ = MIN;
+}
+
 int	main(int argc, char **argv)
 {
 	t_map		*map;
@@ -310,6 +319,8 @@ int	main(int argc, char **argv)
 	unsigned int	colorrange; //debug
 
 	meme = (t_window*)malloc(sizeof(*meme));
+    meme->zbuf = (long int*)malloc(WINY * WINX * sizeof(*(meme->zbuf))); //TODO free on exit
+    initbuf(meme->zbuf, WINX * WINY);
 	meme->drag_flag = 0;
 	meme->shift.r_flag = 0;
 	meme->shift.l_flag = 0;
@@ -425,12 +436,12 @@ void	drawmap(t_window *meme, t_map *map)
                      (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
             drawline((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
                      (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)}, meme, map);
-            triangle1((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
+            trianglebuf((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
                      (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)},
                      (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
             //triangle2((t_point){.x = i + 1, .y = j + 1, .color = pp(map, i, j, 1)}, //TODO fix dis
-            //         (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)},
-            //         (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
+                 //    (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)},
+                  //   (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
             i++;
         }
         j++;
