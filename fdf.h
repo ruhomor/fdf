@@ -58,6 +58,14 @@ typedef struct	s_point
 	t_color			color;
 }				t_point;
 
+typedef struct	s_fpoint
+{
+    float		x;
+    float		y;
+    float		z;
+    t_color			color;
+}				t_fpoint;
+
 typedef	struct	s_map
 {
 	long int		**cell;

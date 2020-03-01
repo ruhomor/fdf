@@ -27,9 +27,6 @@ int		rgbtohex(t_color color, double alpha)
 {
 	int	hex;
 
-	//color.r = 255;
-	//color.g = 255;
-	//color.b = 255;
 	hex = (((char)(color.r * alpha) & 0xff) << 16) | (((char)(color.g * alpha) & 0xff) << 8) | ((char)(color.b * alpha) & 0xff);
 	return (hex);
 }
@@ -262,6 +259,79 @@ void drawlinecool(t_point start, t_point end, t_window *meme, t_map *map)
 */
 void drawline(t_point start, t_point end, t_window *meme, t_map *map)
 {
+    long int	j;
+    t_point     cur;
+    float       phi;
+    long int    idx;
+    long int    *zbuf;
+    char        steep;
+    long int    dx;
+    long int    dy;
+    long int    derror2;
+    long int    error2;
+
+    zbuf = meme->zbuf;
+    start.z = map->cell[start.y][start.x]; //zoom?
+    end.z = map->cell[end.y][end.x]; //zoom? //zoom?
+    zoomaiso(&start, meme);
+    zoomaiso(&end, meme);
+
+    steep = 0;
+    if (labs(start.x - end.x) < labs(start.y - end.y))
+    {
+        swapxy(&start.x, &start.y);
+        swapxy(&end.x, &end.y);
+        steep = 1;
+    }
+    if (start.x > end.x)
+        swap(&start, &end);
+    dx = end.x - start.x;
+    dy = end.y - start.y;
+    derror2 = labs(dy) * 2;
+    error2 = 0;
+    j = start.x;
+    while (j <= end.x)
+    {
+        phi = end.x == start.x ? 1. : (float)(j - start.x) / (float)(end.x - start.x);
+        //cur = (float)a + ((float)(b - a)) * phi;
+        cur.x = (float)start.x + ((float)(end.x - start.x)) * phi;
+        cur.y = (float)start.y + ((float)(end.y - start.y)) * phi;
+        cur.z = (float)start.z + ((float)(end.z - start.z)) * phi;
+        cur.color.r = (float)start.color.r + ((float)(end.color.r - start.color.r)) * phi;
+        cur.color.g = (float)start.color.g + ((float)(end.color.g - start.color.g)) * phi;
+        cur.color.b = (float)start.color.b + ((float)(end.color.b - start.color.b)) * phi;
+        if (steep) //swapped x and y ! ! ! and it has to be that way ! ! !
+        {
+            idx = cur.y + cur.x * WINX; //TODO think here DEBUG POLICE!
+            if ((cur.x >= 0) && (cur.y >= 0) && (cur.x < WINY) && (cur.y < WINX) && (zbuf[idx] < cur.z))
+            {
+                zbuf[idx] = cur.z; // this somehow doesnt seem to be working!!!
+                mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.y, cur.x, rgbtohex(cpx(cur, start, end), 1));
+            }
+        }
+        else
+        {
+            idx = cur.x + cur.y * WINX;// TODO and here DEBUG PLS
+            if ((cur.x >= 0) && (cur.y >= 0) && (cur.x < WINX) && (cur.y < WINY) && (zbuf[idx] < cur.z))
+            {
+                zbuf[idx] = cur.z;// this too! somehow doesnt seem to be working!!!
+                mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cpy(cur, start, end), 1));
+            }
+        }
+        error2 += derror2;
+        if (error2 > dx)
+        {
+            cur.y += (end.y > start.y ? 1 : -1);
+            error2 -= dx * 2;
+        }
+        cur.x++;
+        j++;
+    }
+}
+
+
+void drawlineoldbutgold(t_point start, t_point end, t_window *meme, t_map *map)
+{
     char        steep;
     long int    dx;
     long int    dy;
@@ -270,6 +340,7 @@ void drawline(t_point start, t_point end, t_window *meme, t_map *map)
     t_point     cur;
     long int    idx;
     long int    *zbuf;
+    float       phi;
 
     zbuf = meme->zbuf;
     start.z = map->cell[start.y][start.x]; //zoom?
@@ -284,28 +355,34 @@ void drawline(t_point start, t_point end, t_window *meme, t_map *map)
       steep = 1;
     }
     if (start.x > end.x)
-    {
         swap(&start, &end);
-    }
     dx = end.x - start.x;
     dy = end.y - start.y;
     derror2 = labs(dy) * 2;
     error2 = 0;
     cur = start;
-    while (cur.x <= end.x)
+    while (cur.x <= end.x) //TODO cur.z???
     {
+        phi = end.x == start.x ? 1. : (float)(cur.x - start.x) / (float)(end.x - start.x);
         idx = cur.x + cur.y * WINX;
-        if ((cur.x >= 0) && (cur.y >= 0) && (cur.x < WINX) && (cur.y < WINY) && (zbuf[idx] < cur.z))
+        cur.z = (float)start.z + ((float)(end.z - start.z)) * phi;
+        if (steep)
         {
-            if (steep) {
+            if ((cur.x >= 0) && (cur.y >= 0) && (cur.x < WINX) && (cur.y < WINY) && (zbuf[idx] < cur.z))
+            {
+                zbuf[idx] = cur.z;
                 mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.y, cur.x, rgbtohex(cur.color, 1));
-                //image.set(y, x, color);
-                cur.color = cpx(cur, start, end);
-            } else {
-                //image.set(x, y, color);
-                mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cur.color, 1));
-                cur.color = cpy(cur, start, end);
             }
+            cur.color = cpx(cur, start, end);
+        }
+        else
+        {
+            if ((cur.x >= 0) && (cur.y >= 0) && (cur.x < WINX) && (cur.y < WINY) && (zbuf[idx] < cur.z))
+            {
+                zbuf[idx] = cur.z;
+                mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cur.color, 1));
+            }
+            cur.color = cpy(cur, start, end);
         }
         error2 += derror2;
         if (error2 > dx) 
@@ -315,6 +392,65 @@ void drawline(t_point start, t_point end, t_window *meme, t_map *map)
         }
         cur.x++;
     }
+}
+
+t_point pt_add(t_point a, t_point b)
+{
+    a.x = a.x + b.x;
+    a.y = a.y + b.y;
+    a.z = a.z + b.z;
+    a.color.r = a.color.r + b.color.r;
+    a.color.g = a.color.g + b.color.g;
+    a.color.b = a.color.b + b.color.b;
+    return (a);
+}
+
+t_point pt_sub(t_point a, t_point b)
+{
+    a.x = a.x - b.x;
+    a.y = a.y - b.y;
+    a.z = a.z - b.z;
+    a.color.r = a.color.r - b.color.r;
+    a.color.g = a.color.g - b.color.g;
+    a.color.b = a.color.b - b.color.b;
+    return (a);
+}
+
+t_point pt_mult(t_point a, float b)
+{
+    a.x *= b;
+    a.y *= b;
+    a.z *= b;
+    a.color.r *= b;
+    a.color.g *= b;
+    a.color.b *= b;
+    return (a);
+}
+
+t_fpoint pt_ltf(t_point a)
+{
+    t_fpoint b;
+
+    b.x = a.x;
+    b.y = a.y;
+    b.z = a.z;
+    b.color.r = a.color.r;
+    b.color.g = a.color.g;
+    b.color.b = a.color.b;
+    return (b);
+}
+
+t_point pt_ftl(t_fpoint a)
+{
+    t_point b;
+
+    b.x = a.x;
+    b.y = a.y;
+    b.z = a.z;
+    b.color.r = a.color.r;
+    b.color.g = a.color.g;
+    b.color.b = a.color.b;
+    return (b);
 }
 
 void triangle1(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map)
@@ -505,7 +641,7 @@ void trianglebuf(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map)
             idx = cur.x + cur.y * WINX;
             if ((cur.x >= 0) && (cur.y >= 0) && (cur.x < WINX) && (cur.y < WINY) && (zbuf[idx] < cur.z))
             {
-		        printf("idx: %ld zbuf: %ld x: %ld y: %ld z: %ld\n", idx, zbuf[idx], cur.x, cur.y, cur.z);
+		        //printf("idx: %ld zbuf: %ld x: %ld y: %ld z: %ld\n", idx, zbuf[idx], cur.x, cur.y, cur.z);
                 zbuf[idx] = cur.z;
                 mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cpx(cur, a, b), 1));
                 //image.set(P.x, P.y, color);
