@@ -107,6 +107,8 @@ void			readmap(t_map *map, char *file);
 int				bitabs(int n);
 void			initvals(t_point *d, t_point *s, t_point *start, t_point *end);
 void			drawline(t_point start, t_point end, t_window *meme, t_map *map);
+void			drawlineoldbutgold(t_point start, t_point end, t_window *meme, t_map *map);
+void			drawlinecool(t_point start, t_point end, t_window *meme, t_map *map);
 void			drawmap(t_window *meme, t_map *map);
 t_color			pp(t_map *map, int x, int y, int zoom);
 void			blackout(t_window *meme);
@@ -114,6 +116,10 @@ void            triangle1(t_point t0, t_point t1, t_point t2, t_window *meme, t_
 void            triangle2(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map);
 void            trianglebuf(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map);
 void            trianglebufre(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map);
+void trianglebuffix(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map);
+void drawlinefix(t_point start, t_point end, t_window *meme, t_map *map);
+
+
 
 
 #endif

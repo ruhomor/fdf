@@ -470,16 +470,16 @@ void	drawmap(t_window *meme, t_map *map)
         i = 0;
         while (i < map->width - 1)
         {
-            drawline((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
+            drawlinefix((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
                      (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
-            drawline((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
+            drawlinefix((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
                      (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)}, meme, map);
-            trianglebuf((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
+            trianglebuffix((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
                      (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)},
                      (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
-            //trianglebuf2((t_point){.x = i + 1, .y = j + 1, .color = pp(map, i, j, 1)}, //TODO fix dis
-            //         (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)},
-            //         (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
+            //trianglebuffix((t_point){.x = i + 1, .y = j + 1, .color = pp(map, i, j, 1)}, //TODO fix dis
+             //        (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)},
+             //        (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
             i++;
         }
         j++;
