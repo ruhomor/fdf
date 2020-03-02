@@ -159,7 +159,10 @@ t_color	pp(t_map *map, int x, int y, int zoom)
 
 	zoom--;
 	zoom++;
-	color.r = (130 - 0) * map->cell[y][x] / map->colorrange + 0;
+	if (map->colorrange != 0)
+	    color.r = (130 - 0) * map->cell[y][x] / map->colorrange;
+	else
+        color.r = (130 - 0) * map->cell[y][x];
 	color.g = 255;
 	color.b = 255;
 	return (HsvToRgb(color));
