@@ -1,10 +1,23 @@
 #include <stdio.h>
 #include "fdf.h"
 
-void	maperror(t_map *map)
+void	maperror(t_map *map, t_window *meme)
 {
 	long int	**cell;
+	long int    *zbuf;
 
+    if (meme)
+    {
+        zbuf = meme->zbuf;
+        if (zbuf)
+        {
+            free(zbuf);
+            zbuf = NULL;
+        }
+        mlx_destroy_window(meme->mlx_ptr, meme->win_ptr);
+        free(meme);
+        meme = NULL;
+    }
 	if (map)
 	{
 		if (map->cell)
@@ -131,7 +144,7 @@ int	min(int *arr, int w)
 	return (min);
 }
 */
-void	readmap(t_map *map, char *file)
+void	readmap(t_map *map, char *file, t_window *meme)
 {
 	int	fd;
 	char	*mapline;
@@ -155,7 +168,7 @@ void	readmap(t_map *map, char *file)
 		}
 		else
 		{
-			maperror(map);
+			maperror(map, meme);
 			break ;
 		}
 	}

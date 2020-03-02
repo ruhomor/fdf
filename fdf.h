@@ -94,16 +94,18 @@ typedef struct  s_window
 	long int        *zbuf;
 	t_shift         shift;
 	int             attitude;
+	int             renmod;
+	int 			prjk;
 }				t_window;
 
-void			maperror(t_map *map);
+void			maperror(t_map *map, t_window *meme);
 t_point			transformXYZ(t_point point, t_angle angle);
 t_point			transformX(t_point point, double angle);
 t_point			transformY(t_point point, double angle);
 long int			**addline(t_map *map, long int *arr);
 long int			*reallocints(long int **ptr, int msize, long int *arr);
 int				ft_ints(char *mapline, t_map *map);
-void			readmap(t_map *map, char *file);
+void			readmap(t_map *map, char *file, t_window *meme);
 int				bitabs(int n);
 void			initvals(t_point *d, t_point *s, t_point *start, t_point *end);
 void			drawline(t_point start, t_point end, t_window *meme, t_map *map);
@@ -112,12 +114,8 @@ void			drawlinecool(t_point start, t_point end, t_window *meme, t_map *map);
 void			drawmap(t_window *meme, t_map *map);
 t_color			pp(t_map *map, int x, int y, int zoom);
 void			blackout(t_window *meme);
-void            triangle1(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map);
-void            triangle2(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map);
 void            trianglebuf(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map);
 void            trianglebufre(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map);
-void trianglebuffix(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map);
-void drawlinefix(t_point start, t_point end, t_window *meme, t_map *map);
 
 
 

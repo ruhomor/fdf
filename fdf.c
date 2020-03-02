@@ -19,31 +19,36 @@ void	escape_butt(t_window *meme)
     t_map       *map;
     long int    *zbuf;
 
-    zbuf = meme->zbuf;
-    map = meme->map;
-    if (map)
+    if (meme)
     {
-        if (map->cell)
+        map = meme->map;
+        if (map)
         {
-            cell = map->cell;
-            //ft_putstr_fd("invalid map?", 2);
-            while (*cell)
+            if (map->cell)
             {
-                //printf("beepbeep\n");
-                free(*cell);
-                cell++;
+                cell = map->cell;
+                //ft_putstr_fd("invalid map?", 2);
+                while (*cell)
+                {
+                    //printf("beepbeep\n");
+                    free(*cell);
+                    cell++;
+                }
+                free(map->cell);
             }
-            free(map->cell);
+            free(map);
+            map = NULL;
         }
-        free(map);
-        map = NULL;
+        zbuf = meme->zbuf;
+        if (zbuf)
+        {
+            free(zbuf);
+            zbuf = NULL;
+        }
+        mlx_destroy_window(meme->mlx_ptr, meme->win_ptr);
+        free(meme);
+        meme = NULL;
     }
-    if (zbuf)
-    {
-        free(zbuf);
-        zbuf = NULL;
-    }
-    mlx_destroy_window(meme->mlx_ptr, meme->win_ptr);
     exit(0);
 }
 
@@ -304,6 +309,27 @@ int	key_press1(int keycode, void *p)
     {
         escape_butt(meme);
     }
+	if (keycode == 18)
+    {
+        meme->renmod = 1; //brezenham
+    }
+    if (keycode == 19)
+    {
+        meme->renmod = 2; //antializing
+    }
+    if (keycode == 20)
+    {
+        meme->renmod = 3; //brezenham + triangle
+    }
+    if (keycode == 21)
+    {
+        meme->renmod = 4; //brezenham + 2 triangles
+    }
+    if (keycode == 35)
+    {
+        meme->prjk += 1;
+        meme->prjk %= 2;//projection
+    }
 	meme->shift.x += meme->shift.r_flag + meme->shift.l_flag; //TODO put inside if
 	meme->shift.y += meme->shift.u_flag + meme->shift.d_flag;
 	mlx_clear_window(meme->mlx_ptr, meme->win_ptr);
@@ -368,13 +394,15 @@ int	main(int argc, char **argv)
 	meme->angle.b = 0;
 	meme->zoom = 2;
 	meme->attitude = 1;
+	meme->renmod = 1;
+	meme->prjk = 0;
 	i = 0;
 	j = 0;
 	argc--;
 	map = (t_map*)malloc(sizeof(*map));
 	map->cell = NULL;
 	//readmap(map, "test1");
-	readmap(map, argv[1]);
+	readmap(map, argv[1], meme);
     meme->shift.x = WINX / 2 - map->width / 2;
     meme->shift.y = WINY / 2 - map->height / 2;
 	colorrange = map->max - map->min; //debug TODO BUG
@@ -463,23 +491,35 @@ void	drawmap(t_window *meme, t_map *map)
 {
     int	i;
     int	j;
+    int renmode;
 
+    renmode = meme->renmod;
     j = 0;
     while (j < map->height - 1)
     {
         i = 0;
         while (i < map->width - 1)
         {
-            drawlinefix((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
-                     (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
-            drawlinefix((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
-                     (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)}, meme, map);
-            trianglebuffix((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
-                     (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)},
-                     (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
-            //trianglebuffix((t_point){.x = i + 1, .y = j + 1, .color = pp(map, i, j, 1)}, //TODO fix dis
-             //        (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)},
-             //        (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
+            if (renmode != 2)
+                drawline((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
+                         (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
+            if (renmode != 2)
+                drawline((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
+                         (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)}, meme, map);
+            if (renmode == 2)
+                drawlinecool((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
+                         (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
+            if (renmode == 2)
+                drawlinecool((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
+                         (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)}, meme, map);
+            if (renmode >= 3)
+                trianglebuf((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
+                         (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)},
+                         (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
+            if (renmode >= 4)
+                trianglebuf((t_point){.x = i + 1, .y = j + 1, .color = pp(map, i + 1, j + 1, 1)}, //TODO fix dis
+                         (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)},
+                         (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
             i++;
         }
         j++;
@@ -487,12 +527,24 @@ void	drawmap(t_window *meme, t_map *map)
     j = map->height - 1; // 1 1 1
     i = -1;		     // 1 1 1 //
     while (++i < map->width - 1)
-        drawline((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
-                 (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
+    {
+        if (renmode != 2)
+            drawline((t_point) {.x = i, .y = j, .color = pp(map, i, j, 1)},
+                     (t_point) {.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
+        if (renmode == 2)
+            drawlinecool((t_point) {.x = i, .y = j, .color = pp(map, i, j, 1)},
+                     (t_point) {.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
+    }
     i = map->width - 1;
     j = -1;
     while (++j < map->height - 1)
-        drawline((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
-                 (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)}, meme, map);
+    {
+        if (renmode != 2)
+            drawline((t_point) {.x = i, .y = j, .color = pp(map, i, j, 1)},
+                     (t_point) {.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)}, meme, map);
+        if (renmode == 2)
+            drawlinecool((t_point) {.x = i, .y = j, .color = pp(map, i, j, 1)},
+                     (t_point) {.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)}, meme, map);
+    }
     initbuf(meme->zbuf, WINX * WINY);
 }
