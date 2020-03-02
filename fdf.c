@@ -13,6 +13,40 @@
 #include <stdio.h>
 #include "fdf.h"
 
+void	escape_butt(t_window *meme)
+{
+    long int	**cell;
+    t_map       *map;
+    long int    *zbuf;
+
+    zbuf = meme->zbuf;
+    map = meme->map;
+    if (map)
+    {
+        if (map->cell)
+        {
+            cell = map->cell;
+            //ft_putstr_fd("invalid map?", 2);
+            while (*cell)
+            {
+                //printf("beepbeep\n");
+                free(*cell);
+                cell++;
+            }
+            free(map->cell);
+        }
+        free(map);
+        map = NULL;
+    }
+    if (zbuf)
+    {
+        free(zbuf);
+        zbuf = NULL;
+    }
+    mlx_destroy_window(meme->mlx_ptr, meme->win_ptr);
+    exit(0);
+}
+
 t_color	HsvToRgb(t_color hsv) //returns rgb
 {
 	t_color	rgb;
@@ -266,6 +300,10 @@ int	key_press1(int keycode, void *p)
     {
 	    meme->attitude -= 1;
     }
+	if (keycode == 53)
+    {
+        escape_butt(meme);
+    }
 	meme->shift.x += meme->shift.r_flag + meme->shift.l_flag; //TODO put inside if
 	meme->shift.y += meme->shift.u_flag + meme->shift.d_flag;
 	mlx_clear_window(meme->mlx_ptr, meme->win_ptr);
@@ -436,10 +474,10 @@ void	drawmap(t_window *meme, t_map *map)
                      (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
             drawline((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
                      (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)}, meme, map);
-            //trianglebuf((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
-            //         (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)},
-            //         (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
-            //triangle2((t_point){.x = i + 1, .y = j + 1, .color = pp(map, i, j, 1)}, //TODO fix dis
+            trianglebuf((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
+                     (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)},
+                     (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
+            //trianglebuf2((t_point){.x = i + 1, .y = j + 1, .color = pp(map, i, j, 1)}, //TODO fix dis
             //         (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)},
             //         (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j, 1)}, meme, map);
             i++;

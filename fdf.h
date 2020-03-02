@@ -50,6 +50,13 @@ typedef struct	s_color
 	unsigned char		b;
 }				t_color;
 
+typedef struct	s_fcolor
+{
+    float		r;
+    float		g;
+    float		b;
+}				t_fcolor;
+
 typedef struct	s_point
 {
 	long int		x;
@@ -63,7 +70,7 @@ typedef struct	s_fpoint
     float		x;
     float		y;
     float		z;
-    t_color			color;
+    t_fcolor			color;
 }				t_fpoint;
 
 typedef	struct	s_map
@@ -106,5 +113,7 @@ void			blackout(t_window *meme);
 void            triangle1(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map);
 void            triangle2(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map);
 void            trianglebuf(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map);
+void            trianglebufre(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map);
+
 
 #endif

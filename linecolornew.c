@@ -405,6 +405,17 @@ t_point pt_add(t_point a, t_point b)
     return (a);
 }
 
+t_fpoint pt_fadd(t_fpoint a, t_fpoint b)
+{
+    a.x = a.x + b.x;
+    a.y = a.y + b.y;
+    a.z = a.z + b.z;
+    a.color.r = a.color.r + b.color.r;
+    a.color.g = a.color.g + b.color.g;
+    a.color.b = a.color.b + b.color.b;
+    return (a);
+}
+
 t_point pt_sub(t_point a, t_point b)
 {
     a.x = a.x - b.x;
@@ -427,16 +438,27 @@ t_point pt_mult(t_point a, float b)
     return (a);
 }
 
+t_fpoint pt_fmult(t_fpoint a, float b)
+{
+    a.x *= b;
+    a.y *= b;
+    a.z *= b;
+    a.color.r *= b;
+    a.color.g *= b;
+    a.color.b *= b;
+    return (a);
+}
+
 t_fpoint pt_ltf(t_point a)
 {
     t_fpoint b;
 
-    b.x = a.x;
-    b.y = a.y;
-    b.z = a.z;
-    b.color.r = a.color.r;
-    b.color.g = a.color.g;
-    b.color.b = a.color.b;
+    b.x = (float)a.x;
+    b.y = (float)a.y;
+    b.z = (float)a.z;
+    b.color.r = (float)a.color.r;
+    b.color.g = (float)a.color.g;
+    b.color.b = (float)a.color.b;
     return (b);
 }
 
@@ -444,131 +466,13 @@ t_point pt_ftl(t_fpoint a)
 {
     t_point b;
 
-    b.x = a.x;
-    b.y = a.y;
-    b.z = a.z;
-    b.color.r = a.color.r;
-    b.color.g = a.color.g;
-    b.color.b = a.color.b;
+    b.x = (long int)a.x;
+    b.y = (long int)a.y;
+    b.z = (long int)a.z;
+    b.color.r = (unsigned char)a.color.r;
+    b.color.g = (unsigned char)a.color.g;
+    b.color.b = (unsigned char)a.color.b;
     return (b);
-}
-
-void triangle1(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map)
-{
-    int         total_height;
-    long int    i;
-    t_point     a;
-    t_point     b;
-    char        second_half;
-    int         segment_height;
-    float       alpha;
-    float       beta;
-    long int    j;
-
-    t0.z = map->cell[t0.y][t0.x]; //zoom?
-    t1.z = map->cell[t1.y][t1.x]; //zoom? //zoom?
-    t2.z = map->cell[t2.y][t2.x]; //zoom?
-    zoomaiso(&t0, meme);
-    zoomaiso(&t1, meme);
-    zoomaiso(&t2, meme);
-
-    if (t0.y == t1.y && t0.y == t2.y)
-        return ; // i dont care about degenerate triangles
-        // sort the vertices, t0, t1, t2 lower-to-upper (bubblesort yay!)
-    if (t0.y > t1.y)
-        swap(&t0, &t1);
-    if (t0.y > t2.y)
-        swap(&t0, &t2);
-    if (t1.y > t2.y)
-        swap(&t1, &t2);
-    total_height = t2.y - t0.y;
-    i = 0;
-    while(i < total_height)
-    {
-        second_half = i > t1.y - t0.y || t1.y == t0.y;
-        segment_height = second_half ? t2.y - t1.y : t1.y - t0.y;
-        alpha = (float)i / total_height;
-        beta  = (float)(i - (second_half ? t1.y - t0.y : 0)) / segment_height; // be careful: with above conditions no division by zero here
-        a.x = t0.x + (t2.x - t0.x) * alpha;
-        b.x = second_half ? t1.x + (t2.x - t1.x) * beta : t0.x + (t1.x - t0.x) * beta;
-        a.y = t0.y + (t2.y - t0.y) * alpha;
-        b.y = second_half ? t1.y + (t2.y - t1.y) * beta : t0.y + (t1.y - t0.y) * beta;
-        a.color.g = t0.color.g + (t2.color.g - t0.color.g) * alpha;
-        b.color.g = second_half ? t1.color.g + (t2.color.g - t1.color.g) * beta : t0.color.g + (t1.color.g - t0.color.g) * beta;
-        a.color.b = t0.color.b + (t2.color.b - t0.color.b) * alpha;
-        b.color.b = second_half ? t1.color.b + (t2.color.b - t1.color.b) * beta : t0.color.b + (t1.color.b - t0.color.b) * beta;
-        a.color.r = t0.color.r + (t2.color.r - t0.color.r) * alpha;
-        b.color.r = second_half ? t1.color.r + (t2.color.r - t1.color.r) * beta : t0.color.r + (t1.color.r - t0.color.r) * beta;
-        if (a.x > b.x)
-            swap(&a, &b);
-        j = a.x;
-        while (j <= b.x)
-        {
-            mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, j, t0.y + i, rgbtohex(cpy((t_point){.x = j, .y = t0.y + i}, a, b), 1)); // attention, due to int casts t0.y+i != A.y
-            j++;
-        }
-        i++;
-    }
-}
-
-void triangle2(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map)
-{
-    int         total_width;
-    long int    i;
-    t_point     a;
-    t_point     b;
-    char        second_half;
-    int         segment_width;
-    float       alpha;
-    float       beta;
-    long int    j;
-
-    t0.z = map->cell[t0.y][t0.x]; //zoom?
-    t1.z = map->cell[t1.y][t1.x]; //zoom? //zoom?
-    t2.z = map->cell[t2.y][t2.x]; //zoom?
-    zoomaiso(&t0, meme);
-    zoomaiso(&t1, meme);
-    zoomaiso(&t2, meme);
-
-    if (t0.x == t1.x && t0.x == t2.x)
-        return ; // i dont care about degenerate triangles
-    // sort the vertices, t0, t1, t2 lower-to-upper (bubblesort yay!)
-    if (t0.x > t1.x)
-        swap(&t0, &t1);
-    if (t0.x > t2.x)
-        swap(&t0, &t2);
-    if (t1.x > t2.x)
-        swap(&t1, &t2);
-    total_width = t2.x - t0.x;
-    i = 0;
-    while(i < total_width)
-    {
-        second_half = i > t1.x - t0.x || t1.x == t0.x;
-        segment_width = second_half ? t2.x - t1.x : t1.x - t0.x;
-        alpha = (float)i / total_width;
-        beta  = (float)(i - (second_half ? t1.x - t0.x : 0)) / segment_width; // be careful: with above conditions no division by zero here
-        a.x = t0.x + (t2.x - t0.x) * alpha;
-        b.x = second_half ? t1.x + (t2.x - t1.x) * beta : t0.x + (t1.x - t0.x) * beta;
-        a.y = t0.y + (t2.y - t0.y) * alpha;
-        b.y = second_half ? t1.y + (t2.y - t1.y) * beta : t0.y + (t1.y - t0.y) * beta;
-        a.z = t0.z + (t2.z - t0.z) * alpha;
-        b.z = second_half ? t1.z + (t2.z - t1.z) * beta : t0.z + (t1.z - t0.z) * beta;
-        a.color.g = t0.color.g + (t2.color.g - t0.color.g) * alpha;
-        b.color.g = second_half ? t1.color.g + (t2.color.g - t1.color.g) * beta : t0.color.g + (t1.color.g - t0.color.g) * beta;
-        a.color.b = t0.color.b + (t2.color.b - t0.color.b) * alpha;
-        b.color.b = second_half ? t1.color.b + (t2.color.b - t1.color.b) * beta : t0.color.b + (t1.color.b - t0.color.b) * beta;
-        a.color.r = t0.color.r + (t2.color.r - t0.color.r) * alpha;
-        b.color.r = second_half ? t1.color.r + (t2.color.r - t1.color.r) * beta : t0.color.r + (t1.color.r - t0.color.r) * beta;
-        if (a.y > b.y)
-            swap(&a, &b);
-        j = a.y;
-        while (j <= b.y)
-        {
-            mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, t0.x + i, j, rgbtohex(cpx((t_point){.x = t0.x + i, .y = j}, a, b), 1)); // attention, due to int casts t0.y+i != A.y TODO cpz??
-            j++;
-        }
-        i++;
-    }
 }
 
 void trianglebuf(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map)
@@ -642,6 +546,89 @@ void trianglebuf(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map)
             if ((cur.x >= 0) && (cur.y >= 0) && (cur.x < WINX) && (cur.y < WINY) && (zbuf[idx] < cur.z))
             {
 		        //printf("idx: %ld zbuf: %ld x: %ld y: %ld z: %ld\n", idx, zbuf[idx], cur.x, cur.y, cur.z);
+                zbuf[idx] = cur.z;
+                mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cpx(cur, a, b), 1));
+                //image.set(P.x, P.y, color);
+            }
+            j++;
+        }
+        i++;
+    }
+}
+
+void trianglebufre(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map)
+{
+    long int	total_height;
+    long int	i;
+    long int	j;
+    char		second_half;
+    long int	segment_height;
+    float		alpha;
+    float       beta;
+    t_point     a;
+    t_point     b;
+    t_point     cur;
+    float       phi;
+    long int    idx;
+    long int    *zbuf;
+
+    zbuf = meme->zbuf;
+    t0.z = map->cell[t0.y][t0.x]; //zoom?
+    t1.z = map->cell[t1.y][t1.x]; //zoom? //zoom?
+    t2.z = map->cell[t2.y][t2.x]; //zoom?
+    zoomaiso(&t0, meme);
+    zoomaiso(&t1, meme);
+    zoomaiso(&t2, meme);
+
+    if (t0.y == t1.y && t0.y == t2.y)
+        return ; // i dont care about degenerate triangles
+    if (t0.y > t1.y)
+        swap(&t0, &t1);
+    if (t0.y > t2.y)
+        swap(&t0, &t2);
+    if (t1.y > t2.y)
+        swap(&t1, &t2);
+    total_height = t2.y - t0.y;
+    i = 0;
+    while (i < total_height)
+    {
+        second_half = i > t1.y - t0.y || t1.y == t0.y;
+        segment_height = second_half ? t2.y - t1.y : t1.y - t0.y;
+        alpha = (float)i / total_height;
+        beta = (float)(i - (second_half ? t1.y - t0.y : 0)) / segment_height; // be careful: with above conditions no division by zero here
+        //Vec3i A =               t0 + Vec3f(t2-t0)*alpha;
+        //Vec3i B = second_half ? t1 + Vec3f(t2-t1)*beta : t0 + Vec3f(t1-t0)*beta;
+        a = pt_ftl(pt_fadd(pt_ltf(t0), pt_fmult(pt_ltf(pt_sub(t2, t0)), alpha)));
+        b = second_half ? pt_ftl(pt_fadd(pt_ltf(t1), pt_fmult(pt_ltf(pt_sub(t2, t1)), beta))) : pt_ftl(pt_fadd(pt_ltf(t0), pt_fmult(pt_ltf(pt_sub(t1, t0)), beta)));
+        //a.x = t0.x + ((float)(t2.x - t0.x)) * alpha;
+        //b.x = second_half ? t1.x + ((float)(t2.x - t1.x)) * beta : t0.x + ((float)(t1.x - t0.x)) * beta;
+        //a.y = t0.y + ((float)(t2.y - t0.y)) * alpha;
+        //b.y = second_half ? t1.y + ((float)(t2.y - t1.y)) * beta : t0.y + ((float)(t1.y - t0.y)) * beta;
+        //a.z = t0.z + ((float)(t2.z - t0.z)) * alpha;
+        //b.z = second_half ? t1.z + ((float)(t2.z - t1.z)) * beta : t0.z + ((float)(t1.z - t0.z)) * beta;
+        //a.color.r = t0.color.r + ((float)(t2.color.r - t0.color.r)) * alpha;
+        //b.color.r = second_half ? t1.color.r + ((float)(t2.color.r - t1.color.r)) * beta : t0.color.r + ((float)(t1.color.r - t0.color.r)) * beta;
+        //a.color.g = t0.color.g + ((float)(t2.color.g - t0.color.g)) * alpha;
+        //b.color.g = second_half ? t1.color.g + ((float)(t2.color.g - t1.color.g)) * beta : t0.color.g + ((float)(t1.color.g - t0.color.g)) * beta;
+        //a.color.b = t0.color.b + ((float)(t2.color.b - t0.color.b)) * alpha;
+        //b.color.b = second_half ? t1.color.b + ((float)(t2.color.b - t1.color.b)) * beta : t0.color.b + ((float)(t1.color.b - t0.color.b)) * beta;
+        if (a.x > b.x)
+            swap(&a, &b);
+        j = a.x;
+        while (j <= b.x)
+        {
+            phi = b.x == a.x ? 1. : (float)(j - a.x) / (float)(b.x - a.x);
+            //cur = (float)a + ((float)(b - a)) * phi;
+            cur.x = (float)a.x + ((float)(b.x - a.x)) * phi;
+            cur.y = (float)a.y + ((float)(b.y - a.y)) * phi;
+            cur.z = (float)a.z + ((float)(b.z - a.z)) * phi;
+            cur.color.r = (float)a.color.r + ((float)(b.color.r - a.color.r)) * phi;
+            cur.color.g = (float)a.color.g + ((float)(b.color.g - a.color.g)) * phi;
+            cur.color.b = (float)a.color.b + ((float)(b.color.b - a.color.b)) * phi;
+            idx = cur.x + cur.y * WINX;
+            if ((cur.x >= 0) && (cur.y >= 0) && (cur.x < WINX) && (cur.y < WINY) && (zbuf[idx] < cur.z))
+            {
+                //printf("idx: %ld zbuf: %ld x: %ld y: %ld z: %ld\n", idx, zbuf[idx], cur.x, cur.y, cur.z);
                 zbuf[idx] = cur.z;
                 mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cpx(cur, a, b), 1));
                 //image.set(P.x, P.y, color);
