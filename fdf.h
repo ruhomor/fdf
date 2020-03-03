@@ -99,9 +99,9 @@ typedef struct  s_window
 }				t_window;
 
 void			maperror(t_map *map, t_window *meme);
-t_point			transformXYZ(t_point point, t_angle angle);
-t_point			transformX(t_point point, double angle);
-t_point			transformY(t_point point, double angle);
+t_point			transformxyz(t_point point, t_angle angle);
+t_point			transformx(t_point point, double angle);
+t_point			transformy(t_point point, double angle);
 long int			**addline(t_map *map, long int *arr);
 long int			*reallocints(long int **ptr, int msize, long int *arr);
 int				ft_ints(char *mapline, t_map *map);
@@ -111,7 +111,7 @@ void			initvals(t_point *d, t_point *s, t_point *start, t_point *end);
 void			drawline(t_point start, t_point end, t_window *meme, t_map *map);
 void			drawlineoldbutgold(t_point start, t_point end, t_window *meme, t_map *map);
 void			drawlinecool(t_point start, t_point end, t_window *meme, t_map *map);
-void			drawmap(t_window *meme, t_map *map);
+void			drawmap(t_window *meme);
 t_color			pp(t_map *map, int x, int y, int zoom);
 void			blackout(t_window *meme);
 void            trianglebuf(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map);

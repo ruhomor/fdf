@@ -51,7 +51,7 @@ void		zoomaiso(t_point *start, t_window *meme)
     }
 
 	bcolor = start->color; //starting point rotation
-	*start = transformXYZ(*start, meme->angle); //TODO zero exception??? crush
+	*start = transformxyz(*start, meme->angle); //TODO zero exception??? crush
 	start->color = bcolor;
 
 	if (meme->prjk != 1) {
@@ -190,14 +190,12 @@ void drawlinecool(t_point start, t_point end, t_window *meme, t_map *map)
 	int	grad;
 	t_point	cur;
 
-	start.z = map->cell[start.y][start.x]; //zoom?
-	end.z = map->cell[end.y][end.x]; //zoom?
+	start.z = map->cell[start.y][start.x];
+	end.z = map->cell[end.y][end.x];
 	zoomaiso(&start, meme);
     zoomaiso(&end, meme);
-    //The calculation of the coordinates
 	dx = (end.x > start.x) ? (end.x - start.x) : (start.x - end.x);
 	dy = (end.x > start.x) ? (end.y - start.y) : (start.y - end.y);
-    //If the line is parallel to one of the axis, draw an usual line - fill all the pixels in a row
 	if ((dx == 0) && (start.x >= 0) && (start.x <= WINX) && (ft_min(start.y, end.y) <= WINY) && (ft_max(start.y, end.y >= 0)))
 	{
 		if (end.y < start.y)
@@ -205,9 +203,9 @@ void drawlinecool(t_point start, t_point end, t_window *meme, t_map *map)
 		cur = start;
 		while (cur.y <= end.y)
 		{
-			mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cur.color, 1)); //i, color TODO
+			mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cur.color, 1));
 			cur.y++;
-			cur.color = cpy(cur, end, start); //>>>>>TODO
+			cur.color = cpy(cur, end, start);
 		}
 	    return ;
     }
@@ -224,17 +222,14 @@ void drawlinecool(t_point start, t_point end, t_window *meme, t_map *map)
 	}
 	    return ;
     }
-    //For the X-line (slope coefficient < 1)
     if (abs(dy) < dx)
     {
-        //The first point must have a smaller x coordinate
         if (end.x < start.x)
             swap(&start, &end);
         if ((start.x <= WINX) && (end.x >= 0) && (ft_min(start.y, end.y) <= WINY) && (ft_max(start.y, end.y) >= 0)) //TODO dopisat
         {
             grad = fracToFixed(dy, dx);
             intery = intToFixed(start.y) + grad;
-            //First point
             mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, start.x, start.y, rgbtohex(start.color, 1));
             cur = start;
             cur.x++;
@@ -251,7 +246,6 @@ void drawlinecool(t_point start, t_point end, t_window *meme, t_map *map)
             mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, end.x, end.y, rgbtohex(end.color, 1));
         }
     }
-        //For the Y-line (slope coefficient > 1)
     else {
         if (end.y < start.y)
             swap(&start, &end);
@@ -355,90 +349,6 @@ t_point pt_ftl(t_fpoint a)
     b.color.g = (unsigned char)a.color.g;
     b.color.b = (unsigned char)a.color.b;
     return (b);
-}
-
-
-void trianglebufre(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map)
-{
-    long int	total_height;
-    long int	i;
-    long int	j;
-    char		second_half;
-    long int	segment_height;
-    float		alpha;
-    float       beta;
-    t_point     a;
-    t_point     b;
-    t_point     cur;
-    float       phi;
-    long int    idx;
-    long int    *zbuf;
-
-    zbuf = meme->zbuf;
-    t0.z = map->cell[t0.y][t0.x]; //zoom?
-    t1.z = map->cell[t1.y][t1.x]; //zoom? //zoom?
-    t2.z = map->cell[t2.y][t2.x]; //zoom?
-    zoomaiso(&t0, meme);
-    zoomaiso(&t1, meme);
-    zoomaiso(&t2, meme);
-
-    if (t0.y == t1.y && t0.y == t2.y)
-        return ; // i dont care about degenerate triangles
-    if (t0.y > t1.y)
-        swap(&t0, &t1);
-    if (t0.y > t2.y)
-        swap(&t0, &t2);
-    if (t1.y > t2.y)
-        swap(&t1, &t2);
-    total_height = t2.y - t0.y;
-    i = 0;
-    while (i < total_height)
-    {
-        second_half = i > t1.y - t0.y || t1.y == t0.y;
-        segment_height = second_half ? t2.y - t1.y : t1.y - t0.y;
-        alpha = (float)i / total_height;
-        beta = (float)(i - (second_half ? t1.y - t0.y : 0)) / segment_height; // be careful: with above conditions no division by zero here
-        //Vec3i A =               t0 + Vec3f(t2-t0)*alpha;
-        //Vec3i B = second_half ? t1 + Vec3f(t2-t1)*beta : t0 + Vec3f(t1-t0)*beta;
-        a = pt_ftl(pt_fadd(pt_ltf(t0), pt_fmult(pt_ltf(pt_sub(t2, t0)), alpha)));
-        b = second_half ? pt_ftl(pt_fadd(pt_ltf(t1), pt_fmult(pt_ltf(pt_sub(t2, t1)), beta))) : pt_ftl(pt_fadd(pt_ltf(t0), pt_fmult(pt_ltf(pt_sub(t1, t0)), beta)));
-        //a.x = t0.x + ((float)(t2.x - t0.x)) * alpha;
-        //b.x = second_half ? t1.x + ((float)(t2.x - t1.x)) * beta : t0.x + ((float)(t1.x - t0.x)) * beta;
-        //a.y = t0.y + ((float)(t2.y - t0.y)) * alpha;
-        //b.y = second_half ? t1.y + ((float)(t2.y - t1.y)) * beta : t0.y + ((float)(t1.y - t0.y)) * beta;
-        //a.z = t0.z + ((float)(t2.z - t0.z)) * alpha;
-        //b.z = second_half ? t1.z + ((float)(t2.z - t1.z)) * beta : t0.z + ((float)(t1.z - t0.z)) * beta;
-        //a.color.r = t0.color.r + ((float)(t2.color.r - t0.color.r)) * alpha;
-        //b.color.r = second_half ? t1.color.r + ((float)(t2.color.r - t1.color.r)) * beta : t0.color.r + ((float)(t1.color.r - t0.color.r)) * beta;
-        //a.color.g = t0.color.g + ((float)(t2.color.g - t0.color.g)) * alpha;
-        //b.color.g = second_half ? t1.color.g + ((float)(t2.color.g - t1.color.g)) * beta : t0.color.g + ((float)(t1.color.g - t0.color.g)) * beta;
-        //a.color.b = t0.color.b + ((float)(t2.color.b - t0.color.b)) * alpha;
-        //b.color.b = second_half ? t1.color.b + ((float)(t2.color.b - t1.color.b)) * beta : t0.color.b + ((float)(t1.color.b - t0.color.b)) * beta;
-        if (a.x > b.x)
-            swap(&a, &b);
-        j = a.x;
-        while (j <= b.x)
-        {
-            phi = b.x == a.x ? 1. : (float)(j - a.x) / (float)(b.x - a.x);
-            //cur = (float)a + ((float)(b - a)) * phi;
-            cur.x = (float)a.x + ((float)(b.x - a.x)) * phi;
-            cur.y = (float)a.y + ((float)(b.y - a.y)) * phi;
-            cur.z = (float)a.z + ((float)(b.z - a.z)) * phi;
-            cur.color.r = (float)a.color.r + ((float)(b.color.r - a.color.r)) * phi;
-            cur.color.g = (float)a.color.g + ((float)(b.color.g - a.color.g)) * phi;
-            cur.color.b = (float)a.color.b + ((float)(b.color.b - a.color.b)) * phi;
-            idx = cur.x + cur.y * WINX;
-            if ((cur.x >= 0) && (cur.y >= 0) && (cur.x < WINX) && (cur.y < WINY) && (zbuf[idx] < cur.z))
-            {
-                //printf("idx: %ld zbuf: %ld x: %ld y: %ld z: %ld\n", idx, zbuf[idx], cur.x, cur.y, cur.z);
-                zbuf[idx] = cur.z;
-                mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y, rgbtohex(cpx(cur, a, b), 1));
-                //image.set(P.x, P.y, color);
-            }
-            j++;
-        }
-        i++;
-    }
 }
 
 void trianglebuf(t_point t0, t_point t1, t_point t2, t_window *meme, t_map *map)
