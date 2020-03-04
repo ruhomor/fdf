@@ -16,7 +16,20 @@ NAME = fdf
 
 CFILES = fdf \
 		readmap \
-		linecolornew
+		readmap2 \
+		linecolornew \
+		line1 \
+		line2 \
+		line3 \
+		line4 \
+		line5 \
+		line6 \
+		support1 \
+		support2 \
+		support3 \
+		support4 \
+		support5 \
+		support6
 
 FW = -framework OpenGL -framework AppKit
 
