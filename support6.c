@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   support6.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kachiote <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/03/04 06:43:56 by kachiote          #+#    #+#             */
+/*   Updated: 2020/03/04 06:43:58 by kachiote         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "fdf.h"
 
 int					main(int argc, char **argv)
@@ -25,21 +37,20 @@ void				liner(t_window *meme, int renmode, int i, int j)
 	map = meme->map;
 	if (renmode != 2)
 		drawline((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
-				 (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1,
-														   j, 1)}, meme);
+				(t_point){.x = i + 1, .y = j, .color = pp(map, i + 1,
+						j, 1)}, meme);
 	if (renmode != 2)
 		drawline((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
-				 (t_point){.x = i, .y = j + 1, .color = pp(map, i,
-														   j + 1, 1)}, meme);
-	if (renmode == 2)
-		drawlinecool(
-				(t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
-				(t_point){.x = i + 1, .y = j, .color = pp(map, i + 1,
-														  j, 1)}, meme);
+				(t_point){.x = i, .y = j + 1, .color = pp(map, i,
+						j + 1, 1)}, meme);
 	if (renmode == 2)
 		drawlinecool((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
-					 (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)},
-					 meme);
+				(t_point){.x = i + 1, .y = j, .color = pp(map, i + 1,
+						j, 1)}, meme);
+	if (renmode == 2)
+		drawlinecool((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
+				(t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1, 1)},
+				meme);
 }
 
 void				liner1(t_window *meme, int renmode, int i, int j)
@@ -49,12 +60,12 @@ void				liner1(t_window *meme, int renmode, int i, int j)
 	map = meme->map;
 	if (renmode != 2)
 		drawline((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
-				 (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j,
-														   1)}, meme);
+				(t_point){.x = i + 1, .y = j, .color = pp(map, i + 1, j,
+						1)}, meme);
 	if (renmode == 2)
 		drawlinecool((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
-					 (t_point){.x = i + 1, .y = j, .color = pp(map, i + 1,
-															   j, 1)}, meme);
+				(t_point){.x = i + 1, .y = j, .color = pp(map, i + 1,
+						j, 1)}, meme);
 }
 
 void				liner2(t_window *meme, int renmode, int i, int j)
@@ -64,12 +75,12 @@ void				liner2(t_window *meme, int renmode, int i, int j)
 	map = meme->map;
 	if (renmode != 2)
 		drawline((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
-				 (t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1,
-														   1)}, meme);
+				(t_point){.x = i, .y = j + 1, .color = pp(map, i, j + 1,
+						1)}, meme);
 	if (renmode == 2)
 		drawlinecool((t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
-					 (t_point){.x = i, .y = j + 1, .color = pp(map, i,
-															   j + 1, 1)}, meme);
+				(t_point){.x = i, .y = j + 1, .color = pp(map, i,
+						j + 1, 1)}, meme);
 }
 
 void				triangle(t_window *meme, int renmode, int i, int j)
@@ -81,14 +92,14 @@ void				triangle(t_window *meme, int renmode, int i, int j)
 		trianglebuf(
 				(t_point){.x = i, .y = j, .color = pp(map, i, j, 1)},
 				(t_point){.x = i, .y = j + 1, .color = pp(map, i,
-														  j + 1, 1)},
+						j + 1, 1)},
 				(t_point){.x = i + 1, .y = j, .color = pp(map, i + 1,
-														  j, 1)}, meme);
+						j, 1)}, meme);
 	if (renmode >= 4)
 		trianglebuf((t_point){.x = i + 1, .y = j + 1, .color = pp(map,
-																  i + 1, j + 1, 1)},
+					i + 1, j + 1, 1)},
 					(t_point){.x = i, .y = j + 1, .color = pp(map, i,
-															  j + 1, 1)},
+							j + 1, 1)},
 					(t_point){.x = i + 1, .y = j, .color = pp(map,
-															  i + 1, j, 1)}, meme);
+							i + 1, j, 1)}, meme);
 }

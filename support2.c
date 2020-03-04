@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   support2.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kachiote <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/03/04 06:43:36 by kachiote          #+#    #+#             */
+/*   Updated: 2020/03/04 06:43:38 by kachiote         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "fdf.h"
 
 t_color				hsvtorgb(t_color hsv)
@@ -20,7 +32,7 @@ t_color				hsvtorgb(t_color hsv)
 }
 
 void				sm(t_color rgb, t_color *hsv, unsigned char rgbmin,
-					   unsigned char rgbmax)
+		unsigned char rgbmax)
 {
 	if (rgbmax == rgb.r)
 		hsv->r = 0 + 43 * (rgb.g - rgb.b) / (rgbmax - rgbmin);

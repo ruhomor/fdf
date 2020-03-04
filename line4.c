@@ -1,7 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   line4.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kachiote <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/03/04 06:43:06 by kachiote          #+#    #+#             */
+/*   Updated: 2020/03/04 06:43:07 by kachiote         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "fdf.h"
 
 void			initlinecool(t_point *start, t_point *end, t_2dpoint *d,
-							 t_window *meme)
+		t_window *meme)
 {
 	start->z = meme->map->cell[start->y][start->x];
 	end->z = meme->map->cell[end->y][end->x];
@@ -25,7 +37,7 @@ int				vertical(t_point start, t_point end, t_2dpoint d,
 		while (cur.y <= end.y)
 		{
 			mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y,
-						  rgbtohex(cur.color, 1));
+					rgbtohex(cur.color, 1));
 			cur.y++;
 			cur.color = cpy(cur, end, start);
 		}
@@ -35,7 +47,7 @@ int				vertical(t_point start, t_point end, t_2dpoint d,
 }
 
 int				horizontal(t_point start, t_point end, t_2dpoint d,
-							  t_window *meme)
+		t_window *meme)
 {
 	t_point	cur;
 
@@ -48,7 +60,7 @@ int				horizontal(t_point start, t_point end, t_2dpoint d,
 		while (cur.x <= end.x)
 		{
 			mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y,
-						  rgbtohex(cur.color, 1));
+					rgbtohex(cur.color, 1));
 			cur.x++;
 			cur.color = cpx(cur, start, end);
 		}
@@ -66,9 +78,9 @@ void			supslp1(t_point *cr, t_2dpoint *inter, t_window *meme, int grad)
 	cur = *cr;
 	alpha = (fractionalpart(inter->y));
 	mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y,
-				  rgbtohex(cur.color, 1 - alpha));
+			rgbtohex(cur.color, 1 - alpha));
 	mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y + 1,
-				  (rgbtohex(cur.color, alpha)));
+			(rgbtohex(cur.color, alpha)));
 	inter->y += grad;
 }
 
@@ -86,7 +98,7 @@ void			sloper1(t_point start, t_point end, t_2dpoint d, t_window *meme)
 		grad = fractofixed(d.y, d.x);
 		inter.y = inttofixed(start.y) + grad;
 		mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, start.x, start.y,
-					  rgbtohex(start.color, 1));
+				rgbtohex(start.color, 1));
 		cur = start;
 		cur.x++;
 		while (cur.x < end.x)
@@ -96,6 +108,6 @@ void			sloper1(t_point start, t_point end, t_2dpoint d, t_window *meme)
 			cur.color = cpx(cur, start, end);
 		}
 		mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, end.x, end.y,
-					  rgbtohex(end.color, 1));
+				rgbtohex(end.color, 1));
 	}
 }

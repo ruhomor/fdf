@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   line2.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kachiote <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/03/04 06:42:53 by kachiote          #+#    #+#             */
+/*   Updated: 2020/03/04 06:42:55 by kachiote         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "fdf.h"
 
 long int		inttofixed(int value)
@@ -37,14 +49,14 @@ t_color			cpx(t_point cur, t_point start, t_point end)
 	if (end.x != start.x)
 	{
 		color.r = start.color.r +
-				  (end.color.r - start.color.r) * (cur.x - start.x) /
-				  (end.x - start.x);
+			(end.color.r - start.color.r) * (cur.x - start.x) /
+			(end.x - start.x);
 		color.g = start.color.g +
-				  (end.color.g - start.color.g) * (cur.x - start.x) /
-				  (end.x - start.x);
+			(end.color.g - start.color.g) * (cur.x - start.x) /
+			(end.x - start.x);
 		color.b = start.color.b +
-				  (end.color.b - start.color.b) * (cur.x - start.x) /
-				  (end.x - start.x);
+			(end.color.b - start.color.b) * (cur.x - start.x) /
+			(end.x - start.x);
 	}
 	else
 	{

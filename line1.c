@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   line1.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kachiote <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/03/04 06:42:45 by kachiote          #+#    #+#             */
+/*   Updated: 2020/03/04 06:42:49 by kachiote         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "fdf.h"
 
 void			initvals(t_point *d, t_point *s, t_point *start, t_point *end)
@@ -26,8 +38,8 @@ int				rgbtohex(t_color color, double alpha)
 	int hex;
 
 	hex = (((char)(color.r * alpha) & 0xff) << 16) |
-		  (((char)(color.g * alpha) & 0xff) << 8) |
-		  ((char)(color.b * alpha) & 0xff);
+		(((char)(color.g * alpha) & 0xff) << 8) |
+		((char)(color.b * alpha) & 0xff);
 	return (hex);
 }
 

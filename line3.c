@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   line3.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kachiote <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/03/04 06:43:00 by kachiote          #+#    #+#             */
+/*   Updated: 2020/03/04 06:43:02 by kachiote         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "fdf.h"
 
 t_color			cpy(t_point cur, t_point start, t_point end)
@@ -7,14 +19,14 @@ t_color			cpy(t_point cur, t_point start, t_point end)
 	if (end.y != start.y)
 	{
 		color.r = start.color.r +
-				  (end.color.r - start.color.r) * (cur.y - start.y) /
-				  (end.y - start.y);
+			(end.color.r - start.color.r) * (cur.y - start.y) /
+			(end.y - start.y);
 		color.g = start.color.g +
-				  (end.color.g - start.color.g) * (cur.y - start.y) /
-				  (end.y - start.y);
+			(end.color.g - start.color.g) * (cur.y - start.y) /
+			(end.y - start.y);
 		color.b = start.color.b +
-				  (end.color.b - start.color.b) * (cur.y - start.y) /
-				  (end.y - start.y);
+			(end.color.b - start.color.b) * (cur.y - start.y) /
+			(end.y - start.y);
 	}
 	else
 	{

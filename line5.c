@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   line5.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kachiote <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/03/04 06:43:12 by kachiote          #+#    #+#             */
+/*   Updated: 2020/03/04 06:43:13 by kachiote         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "fdf.h"
 
 void			supslp2(t_point *cr, t_2dpoint *inter, t_window *meme, int grad)
@@ -9,9 +21,9 @@ void			supslp2(t_point *cr, t_2dpoint *inter, t_window *meme, int grad)
 	cur = *cr;
 	alpha = (fractionalpart(inter->x));
 	mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y,
-				  rgbtohex(cur.color, 1 - alpha));
+			rgbtohex(cur.color, 1 - alpha));
 	mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x + 1, cur.y,
-				  rgbtohex(cur.color, alpha));
+			rgbtohex(cur.color, alpha));
 	inter->x += grad;
 }
 
@@ -29,7 +41,7 @@ void			sloper2(t_point start, t_point end, t_2dpoint d, t_window *meme)
 		grad = fractofixed(d.x, d.y);
 		inter.x = inttofixed(start.x) + grad;
 		mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, start.x, start.y,
-					  rgbtohex(start.color, 1));
+				rgbtohex(start.color, 1));
 		cur = start;
 		cur.y++;
 		while (cur.y < end.y)
@@ -39,7 +51,7 @@ void			sloper2(t_point start, t_point end, t_2dpoint d, t_window *meme)
 			cur.color = cpy(cur, start, end);
 		}
 		mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, end.x, end.y,
-					  rgbtohex(end.color, 1));
+				rgbtohex(end.color, 1));
 	}
 }
 

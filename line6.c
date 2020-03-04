@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   line6.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kachiote <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/03/04 06:43:18 by kachiote          #+#    #+#             */
+/*   Updated: 2020/03/04 06:43:20 by kachiote         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "fdf.h"
 
 unsigned char	ac(char s, t_color tr, float beta)
@@ -9,7 +21,7 @@ unsigned char	ac(char s, t_color tr, float beta)
 }
 
 t_line			trianglearsehole(t_point t0, t_point t1, t_point t2,
-								   t_2dpoint ass)
+		t_2dpoint ass)
 {
 	float		alpha;
 	float		beta;
@@ -37,7 +49,7 @@ t_line			trianglearsehole(t_point t0, t_point t1, t_point t2,
 }
 
 long int		*initsortbuf(t_point *t0, t_point *t1, t_point *t2,
-							 t_window *meme)
+		t_window *meme)
 {
 	t_map		*map;
 
@@ -66,7 +78,7 @@ void			trgg(t_line line, int j, long int *zbuf, t_window *meme)
 	long int	idx;
 
 	phi = line.b.x == line.a.x ? 1. :
-		  (float)(j - line.a.x) / (float)(line.b.x - line.a.x);
+		(float)(j - line.a.x) / (float)(line.b.x - line.a.x);
 	cur.x = iai(line.a.x, line.b.x, phi);
 	cur.y = iai(line.a.y, line.b.y, phi);
 	cur.z = iai(line.a.z, line.b.z, phi);
@@ -79,7 +91,7 @@ void			trgg(t_line line, int j, long int *zbuf, t_window *meme)
 	{
 		zbuf[idx] = cur.z;
 		mlx_pixel_put(meme->mlx_ptr, meme->win_ptr, cur.x, cur.y,
-					  rgbtohex(cpx(cur, line.a, line.b), 1));
+				rgbtohex(cpx(cur, line.a, line.b), 1));
 	}
 }
 
